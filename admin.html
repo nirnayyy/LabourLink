@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard — LabourLink</title>
+  <link rel="icon" href="assets/logo.jpeg" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body data-page="">
+  <div id="header-mount"></div>
+
+  <section class="section admin-shell">
+    <div class="container">
+      <!-- LOGIN -->
+      <div id="login-view" class="login-box hidden">
+        <h2 style="text-align:center">Team Login</h2>
+        <p class="hint center">LabourLink admin dashboard — authorised team only.</p>
+        <div id="login-msg"></div>
+        <form id="login-form">
+          <div class="field"><label>Email</label><input name="email" type="email" required></div>
+          <div class="field"><label>Password</label><input name="password" type="password" required></div>
+          <button class="btn btn-primary btn-block" type="submit">Log in</button>
+        </form>
+      </div>
+
+      <!-- DASHBOARD -->
+      <div id="dash-view" class="hidden">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+          <div><p class="eyebrow">Internal · Team only</p><h2 style="margin:0">Admin Dashboard</h2></div>
+          <div style="display:flex;gap:10px;align-items:center"><span class="muted" id="who"></span><button class="btn btn-ghost btn-sm" id="logout">Log out</button></div>
+        </div>
+
+        <div class="kpi-grid" style="margin-top:22px">
+          <div class="kpi"><b id="kpi-pending">—</b><span>Pending requests</span></div>
+          <div class="kpi"><b id="kpi-workers">—</b><span>Workers</span></div>
+          <div class="kpi"><b id="kpi-bookings">—</b><span>Bookings</span></div>
+          <div class="kpi"><b id="kpi-revpending">—</b><span>Reviews to approve</span></div>
+        </div>
+
+        <div class="admin-tabs">
+          <button data-tab="requests" class="active">Job Requests</button>
+          <button data-tab="workers">Workers</button>
+          <button data-tab="bookings">Bookings</button>
+          <button data-tab="reviews">Reviews</button>
+        </div>
+
+        <div id="tab-msg"></div>
+        <div id="tab-requests" class="tab-panel"></div>
+        <div id="tab-workers" class="tab-panel hidden"></div>
+        <div id="tab-bookings" class="tab-panel hidden"></div>
+        <div id="tab-reviews" class="tab-panel hidden"></div>
+      </div>
+
+      <div id="boot" class="spinner"></div>
+    </div>
+  </section>
+
+  <div id="footer-mount"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

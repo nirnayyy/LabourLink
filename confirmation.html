@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Request Received — LabourLink</title>
+  <link rel="icon" href="assets/logo.jpeg" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body data-page="">
+  <div id="header-mount"></div>
+  <section class="section">
+    <div class="container">
+      <div class="confirm-box">
+        <div class="check">✓</div>
+        <h2 id="greet">Request received!</h2>
+        <p class="lead">Your job request reference is</p>
+        <div class="ref-code" id="ref">LL-XXXXXX</div>
+        <p class="muted">Our team will <b>call you to confirm a worker</b>. If you posted before 8 PM, expect confirmation by <b>9 PM</b> for the next day.</p>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:22px">
+          <a href="browse.html" class="btn btn-ghost">Browse workers</a>
+          <a href="index.html" class="btn btn-primary">Back to home</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div id="footer-mount"></div>
+  <script src="js/config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/common.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const ref = sessionStorage.getItem("ll_ref");
+      const name = sessionStorage.getItem("ll_name");
+      if (ref) document.getElementById("ref").textContent = ref;
+      if (name) document.getElementById("greet").textContent = "Thank you, " + name + "!";
+    });
+  </script>
+</body>
+</html>

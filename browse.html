@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Find Workers — LabourLink</title>
+  <link rel="icon" href="assets/logo.jpeg" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body data-page="browse.html">
+  <div id="header-mount"></div>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Browse available workers</p>
+        <h2>Find a trusted worker near you</h2>
+        <p class="lead">Every worker is registered in person by our team — with a real photo and verified phone number.</p>
+      </div>
+
+      <div class="card" style="padding:18px;margin-bottom:26px">
+        <div class="row-2">
+          <div class="field" style="margin:0">
+            <label for="f-area">Area</label>
+            <select id="f-area"><option value="">All areas</option></select>
+          </div>
+          <div class="field" style="margin:0">
+            <label for="f-type">Type of work</label>
+            <select id="f-type"><option value="">All work types</option></select>
+          </div>
+        </div>
+      </div>
+
+      <p class="muted" id="result-count" style="margin-bottom:14px"></p>
+      <div class="grid cols-4" id="worker-grid"><div class="spinner"></div></div>
+    </div>
+  </section>
+
+  <div id="footer-mount"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/browse.js"></script>
+</body>
+</html>

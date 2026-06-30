@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Post a Job — LabourLink</title>
+  <link rel="icon" href="assets/logo.jpeg" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body data-page="post-job.html">
+  <div id="header-mount"></div>
+  <section class="section">
+    <div class="container form-wrap">
+      <div class="section-head" style="margin-bottom:24px">
+        <p class="eyebrow">Tell us your need</p>
+        <h2>Post a Job</h2>
+        <p class="lead">Fill this in and our team will call to confirm a worker. Post before <b>8 PM</b> for next-day confirmation by <b>9 PM</b>.</p>
+      </div>
+
+      <div class="card" style="padding:28px">
+        <div id="form-msg"></div>
+        <form id="job-form">
+          <div class="row-2">
+            <div class="field"><label>Your name *</label><input name="hirer_name" required placeholder="e.g. Aarav Mehta"></div>
+            <div class="field"><label>Phone number *</label><input name="hirer_phone" required placeholder="10-digit mobile" pattern="[0-9+ ]{7,15}"><div class="hint">We'll send worker details here on WhatsApp/SMS.</div></div>
+          </div>
+          <div class="row-2">
+            <div class="field"><label>Area *</label><select name="area" id="area-sel" required><option value="">Select area</option><option>Knowledge Park</option><option>Kasna</option><option>Greater Noida West</option><option>Sector 62</option></select></div>
+            <div class="field"><label>Type of work *</label><select name="work_type" id="type-sel" required><option value="">Select work</option></select></div>
+          </div>
+          <div class="field"><label>Exact location / landmark *</label><input name="location" required placeholder="e.g. PG near Bennett University, Gate 2"></div>
+          <div class="row-2">
+            <div class="field"><label>Number of workers *</label><input name="num_workers" type="number" min="1" value="1" required></div>
+            <div class="field"><label>Date needed *</label><input name="job_date" type="date" required></div>
+          </div>
+          <div class="field"><label>Daily wage you offer (₹ per worker)</label><input name="wage_offered" type="number" min="0" placeholder="e.g. 600"><div class="hint" id="wage-hint">See market rates on the home page.</div></div>
+          <div class="field"><label>Notes (optional)</label><textarea name="notes" placeholder="Anything the worker should know"></textarea></div>
+          <button class="btn btn-primary btn-block" type="submit">Submit Request</button>
+          <p class="hint center" style="margin-top:10px">No account needed. We only use your number to coordinate this job.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+  <div id="footer-mount"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/postjob.js"></script>
+</body>
+</html>
