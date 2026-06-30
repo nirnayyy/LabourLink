@@ -8,28 +8,6 @@ export default function Layout({ auth, onLogout, children }) {
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
 
-  // Accessibility State Toggles
-  const [largeText, setLargeText] = useState(() => localStorage.getItem('large-text') === 'true');
-  const [highContrast, setHighContrast] = useState(() => localStorage.getItem('high-contrast') === 'true');
-
-  useEffect(() => {
-    if (largeText) {
-      document.body.classList.add('large-text');
-    } else {
-      document.body.classList.remove('large-text');
-    }
-    localStorage.setItem('large-text', largeText);
-  }, [largeText]);
-
-  useEffect(() => {
-    if (highContrast) {
-      document.body.classList.add('high-contrast');
-    } else {
-      document.body.classList.remove('high-contrast');
-    }
-    localStorage.setItem('high-contrast', highContrast);
-  }, [highContrast]);
-
   // LILA Chatbot State
   const [lilaOpen, setLilaOpen] = useState(false);
   const [lilaMessages, setLilaMessages] = useState([
@@ -123,23 +101,13 @@ export default function Layout({ auth, onLogout, children }) {
     <>
       {/* ─── Top Accessibility & Welfare Bar ─── */}
       <div className="top-utility-bar">
-        <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className="container">
           <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
             <span>🇮🇳 National Digital Chowk Welfare Initiative</span>
             <span style={{ color: 'rgba(255,255,255,0.3)' }}>|</span>
-            <button
-              onClick={() => setLargeText(t => !t)}
-              style={{ background: 'none', border: 'none', color: '#ffffff', cursor: 'pointer', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 700 }}
-            >
-              ♿ {largeText ? "Normal Text (A-)" : "Large Text (A+)"}
-            </button>
+            <a href="#accessibility" onClick={(e) => e.preventDefault()}>♿ Accessibility Options</a>
             <span style={{ color: 'rgba(255,255,255,0.3)' }}>|</span>
-            <button
-              onClick={() => setHighContrast(c => !c)}
-              style={{ background: 'none', border: 'none', color: '#ffffff', cursor: 'pointer', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 700 }}
-            >
-              🌓 {highContrast ? "Normal Theme" : "High Contrast"}
-            </button>
+            <span style={{ cursor: 'pointer' }}>🗣️ English / हिन्दी</span>
           </div>
           <div>
             <span>📞 Registry Helpline: <strong>+91 99999-XXXXX</strong></span>
@@ -171,7 +139,7 @@ export default function Layout({ auth, onLogout, children }) {
                   <FileText size={16} strokeWidth={2.5} />
                   Post a Job
                 </NavLink>
-                
+
                 <div className="profile-dropdown-container" ref={dropdownRef}>
                   <button
                     className={`profile-trigger ${profileOpen ? 'active' : ''}`}
@@ -273,7 +241,7 @@ export default function Layout({ auth, onLogout, children }) {
       {/* ─── LILA Chatbot Floating Drawer ─── */}
       <div className="lila-chatbot-container">
         {!lilaOpen ? (
-          <button className="lila-trigger-btn lila-pulse-active" onClick={() => setLilaOpen(true)}>
+          <button className="lila-trigger-btn" onClick={() => setLilaOpen(true)}>
             💬 Ask LILA Assistant
           </button>
         ) : (
@@ -285,7 +253,7 @@ export default function Layout({ auth, onLogout, children }) {
               </div>
               <button onClick={() => setLilaOpen(false)} style={{ background: 'none', border: 'none', color: '#ffffff', cursor: 'pointer', fontSize: '1.1rem', padding: '2px' }}>×</button>
             </div>
-            
+
             <div className="lila-chat-body">
               {lilaMessages.map((msg, idx) => (
                 <div key={idx} className={`lila-message ${msg.sender}`}>
@@ -330,7 +298,7 @@ export default function Layout({ auth, onLogout, children }) {
                 </div>
               </div>
             </div>
-            
+
             <div>
               <h4 style={{ color: '#ffffff', margin: '0 0 20px' }}>Marketplace Links</h4>
               <NavLink to="/browse">Browse Local Workers</NavLink>
@@ -338,7 +306,7 @@ export default function Layout({ auth, onLogout, children }) {
               <NavLink to="/reviews">Read Verified Reviews</NavLink>
               <NavLink to="/about">Our Verification Process</NavLink>
             </div>
-            
+
             <div>
               <h4 style={{ color: '#ffffff', margin: '0 0 20px' }}>Daily Operations SLA</h4>
               <p style={{ fontSize: '0.88rem', margin: '0 0 16px', lineHeight: '1.6' }}>
@@ -353,15 +321,15 @@ export default function Layout({ auth, onLogout, children }) {
               </div>
             </div>
           </div>
-          
+
           <div className="footer-bottom">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
               <div>
                 © {new Date().getFullYear()} LabourLink · Kasna, Knowledge Park &amp; Greater Noida · Created by Nirnay &amp; Team
               </div>
               <div style={{ display: 'flex', gap: '16px', color: '#475569' }}>
-                <NavLink to="/about" style={{ fontSize: '0.8rem', color: '#475569', display: 'inline', padding: 0 }}>Terms</NavLink> · 
-                <NavLink to="/about" style={{ fontSize: '0.8rem', color: '#475569', display: 'inline', padding: 0 }}>Privacy</NavLink> · 
+                <NavLink to="/about" style={{ fontSize: '0.8rem', color: '#475569', display: 'inline', padding: 0 }}>Terms</NavLink> ·
+                <NavLink to="/about" style={{ fontSize: '0.8rem', color: '#475569', display: 'inline', padding: 0 }}>Privacy</NavLink> ·
                 <NavLink to="/login" style={{ fontSize: '0.8rem', color: 'var(--primary)', display: 'inline', padding: 0, fontWeight: 'bold' }}>Team Login</NavLink>
               </div>
             </div>
