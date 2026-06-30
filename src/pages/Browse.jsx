@@ -143,7 +143,7 @@ export default function Browse({ data }) {
             {layoutMode === 'grid' ? (
               <div className="grid cols-3" style={{ gap: '24px' }}>
                 {filtered.length ? filtered.map(w => (
-                  <Link to={`/worker/${w.id}`} className="card glass-card" key={w.id} style={{ display: 'flex', flexDirection: 'column', textDecoration: 'none', background: '#ffffff', overflow: 'hidden', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)' }}>
+                  <Link to={`/worker/${w.id}`} className="card glass-card card-lift" key={w.id} style={{ display: 'flex', flexDirection: 'column', textDecoration: 'none', background: '#ffffff', overflow: 'hidden', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)' }}>
                     <div style={{ position: 'relative', height: '200px', overflow: 'hidden' }}>
                       <img src={w.photo_url || '/assets/worker1.jpeg'} alt={w.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                       <span className={`status-chip ${w.availability_status}`} style={{ position: 'absolute', bottom: '12px', left: '12px', boxShadow: 'var(--shadow-sm)', textTransform: 'capitalize' }}>
@@ -151,7 +151,12 @@ export default function Browse({ data }) {
                       </span>
                     </div>
                     <div style={{ padding: '24px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                      <h3 style={{ margin: 0, fontSize: '1.15rem', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', color: 'var(--ink)' }}>{w.name}</h3>
+                      <h3 style={{ margin: 0, fontSize: '1.15rem', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', color: 'var(--ink)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        {w.name}
+                        <span title="In-Person Verified Identity" style={{ color: 'var(--success)', display: 'inline-flex' }}>
+                          <Shield size={14} style={{ fill: 'rgba(16, 185, 129, 0.1)' }} />
+                        </span>
+                      </h3>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.82rem', margin: '6px 0 14px', color: 'var(--muted)' }}>
                         <MapPin size={12} style={{ color: 'var(--muted-light)' }} /> {w.area}
                       </div>

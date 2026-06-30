@@ -1567,5 +1567,173 @@ table.data tr:hover td {
   transform: translateX(2px);
 }
 
+/* ============================================================
+   Investor-Pitchable Startup Design Elements
+   ============================================================ */
+
+/* High Contrast accessibility theme */
+body.high-contrast {
+  --bg: #0f172a !important;
+  --card: #1e293b !important;
+  --ink: #ffffff !important;
+  --muted: #cbd5e1 !important;
+  --muted-light: #94a3b8 !important;
+  --border: #334155 !important;
+  --primary: #818cf8 !important;
+  --primary-light: #312e81 !important;
+  --primary-border: #4338ca !important;
+}
+
+/* Large Text accessibility scale */
+body.large-text {
+  font-size: 1.18rem !important;
+}
+body.large-text h1 {
+  font-size: clamp(2.6rem, 6.5vw, 4rem) !important;
+}
+body.large-text h2 {
+  font-size: clamp(2rem, 4.5vw, 2.8rem) !important;
+}
+body.large-text p, body.large-text span, body.large-text li, body.large-text button, body.large-text input, body.large-text select {
+  font-size: 1.08rem !important;
+}
+
+/* Linear Gradient title effect */
+.text-gradient {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--indigo-hover) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Floating Navbar */
+.navbar.floating {
+  margin: 16px auto;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(12px);
+  width: calc(100% - 32px);
+  max-width: var(--maxw);
+  z-index: 100;
+  transition: all 0.3s ease;
+}
+
+/* SVG grid mesh backdrop */
+@keyframes mesh-pulse {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 0.35; }
+}
+.grid-mesh {
+  background-image: radial-gradient(var(--border-hover) 1.2px, transparent 1.2px);
+  background-size: 24px 24px;
+  opacity: 0.25;
+  animation: mesh-pulse 8s ease-in-out infinite;
+}
+
+/* Bento grid custom overrides */
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 20px;
+}
+.bento-col-3 { grid-column: span 3; }
+.bento-col-4 { grid-column: span 4; }
+.bento-col-6 { grid-column: span 6; }
+.bento-col-8 { grid-column: span 8; }
+.bento-col-12 { grid-column: span 12; }
+
+@media (max-width: 768px) {
+  .bento-grid {
+    grid-template-columns: 1fr;
+  }
+  .bento-col-3, .bento-col-4, .bento-col-6, .bento-col-8, .bento-col-12 {
+    grid-column: span 12;
+  }
+}
+
+/* Premium Card hover lift */
+.card-lift {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease;
+}
+.card-lift:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary-border);
+}
+
+/* Button sweep shimmers */
+.shimmer-btn {
+  position: relative;
+  overflow: hidden;
+}
+.shimmer-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -50%;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.35) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: skewX(-25deg);
+  transition: 0.75s;
+}
+.shimmer-btn:hover::after {
+  left: 125%;
+}
+
+/* Circular SVG Gauge */
+.gauge-svg {
+  transform: rotate(-90deg);
+}
+.gauge-track {
+  fill: none;
+  stroke: var(--border);
+  stroke-width: 8;
+}
+.gauge-fill {
+  fill: none;
+  stroke: var(--primary);
+  stroke-width: 8;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1s ease-in-out;
+}
+
+/* Custom rating distribution bars */
+.rating-bar-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin: 6px 0;
+}
+.rating-bar {
+  flex: 1;
+  height: 8px;
+  background: var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.rating-bar-fill {
+  height: 100%;
+  background: var(--warning);
+  border-radius: 4px;
+}
+
+/* Chatbot pulsate waves */
+@keyframes lila-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.55); }
+  70% { box-shadow: 0 0 0 15px rgba(99, 102, 241, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+}
+.lila-pulse-active {
+  animation: lila-pulse 2s infinite;
+}
+
+
 
 

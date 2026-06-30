@@ -151,12 +151,12 @@ export default function WorkerDetail({ data, onAddReview }) {
                   const count = rCounts[starsNum] || 0;
                   const pct = (count / totalR) * 100;
                   return (
-                    <div key={starsNum} style={{ display: 'flex', alignItems: 'center', gap: '16px', fontSize: '0.88rem' }}>
-                      <span style={{ width: '56px', fontWeight: 700, color: 'var(--muted)' }}>{starsNum} Stars</span>
-                      <div style={{ flex: 1, height: '8px', background: 'var(--bg)', borderRadius: '99px', overflow: 'hidden', border: '1px solid var(--border)' }}>
-                        <div style={{ width: `${pct}%`, height: '100%', background: 'var(--warning)', borderRadius: '99px' }}></div>
+                    <div key={starsNum} className="rating-bar-container">
+                      <span style={{ width: '56px', fontWeight: 750, color: 'var(--muted)', fontSize: '0.82rem' }}>{starsNum} Stars</span>
+                      <div className="rating-bar" style={{ border: '1px solid var(--border)' }}>
+                        <div className="rating-bar-fill" style={{ width: `${pct}%` }}></div>
                       </div>
-                      <span style={{ width: '28px', color: 'var(--muted-light)', textAlign: 'right', fontWeight: 700 }}>{count}</span>
+                      <span style={{ width: '24px', color: 'var(--muted)', textAlign: 'right', fontWeight: 750, fontSize: '0.82rem' }}>{count}</span>
                     </div>
                   );
                 })}
@@ -188,15 +188,31 @@ export default function WorkerDetail({ data, onAddReview }) {
             <div className="card glass-card" style={{ padding: '32px', background: '#ffffff', border: '1px solid var(--border)', marginBottom: '32px', borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-md)' }}>
               <h3 style={{ margin: '0 0 20px', fontSize: '1.25rem', color: 'var(--ink)' }}>📋 Coordinator Booking</h3>
               
-              <div style={{ background: 'var(--bg)', border: '1px solid var(--border)', padding: '20px', borderRadius: 'var(--radius-md)', marginBottom: '24px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', alignItems: 'center' }}>
-                  <span className="muted" style={{ fontWeight: 600 }}>Reliability Score:</span>
-                  <strong style={{ color: 'var(--primary)', fontSize: '1.1rem' }}>{worker.reliability_score || 50}/100</strong>
+              {/* Circular SVG Reliability Gauge */}
+              <div style={{ background: 'var(--bg)', border: '1px solid var(--border)', padding: '24px', borderRadius: 'var(--radius-md)', marginBottom: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+                <div style={{ position: 'relative', width: '100px', height: '100px' }}>
+                  <svg width="100" height="100" className="gauge-svg">
+                    <circle cx="50" cy="50" r="40" className="gauge-track" />
+                    <circle
+                      cx="50"
+                      cy="50"
+                      r="40"
+                      className="gauge-fill"
+                      strokeDasharray="251.2"
+                      strokeDashoffset={251.2 - (251.2 * (worker.reliability_score || 50)) / 100}
+                    />
+                  </svg>
+                  <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                    <span style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--ink)' }}>{worker.reliability_score || 50}%</span>
+                    <span style={{ fontSize: '0.62rem', color: 'var(--muted)', fontWeight: 700, textTransform: 'uppercase' }}>Reliable</span>
+                  </div>
                 </div>
-                <div style={{ width: '100%', height: '6px', background: '#f1f5f9', borderRadius: '99px', overflow: 'hidden' }}>
-                  <div style={{ width: `${worker.reliability_score || 50}%`, height: '100%', background: 'var(--primary)', borderRadius: '99px' }}></div>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontWeight: 750, fontSize: '0.88rem', color: 'var(--ink)', marginBottom: '4px' }}>Chowk Attendance Score</div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--muted-light)', lineHeight: '1.45', fontWeight: 550 }}>
+                    Based on verified arrival audits and client ratings in Noida.
+                  </div>
                 </div>
-                <div style={{ fontSize: '0.75rem', color: 'var(--muted-light)', marginTop: '10px', lineHeight: '1.45', fontWeight: 550 }}>Based on punctuality, job attendance, and direct Noida user feedbacks.</div>
               </div>
 
               <Link

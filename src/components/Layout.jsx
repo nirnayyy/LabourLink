@@ -8,6 +8,28 @@ export default function Layout({ auth, onLogout, children }) {
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
 
+  // Accessibility State Toggles
+  const [largeText, setLargeText] = useState(() => localStorage.getItem('large-text') === 'true');
+  const [highContrast, setHighContrast] = useState(() => localStorage.getItem('high-contrast') === 'true');
+
+  useEffect(() => {
+    if (largeText) {
+      document.body.classList.add('large-text');
+    } else {
+      document.body.classList.remove('large-text');
+    }
+    localStorage.setItem('large-text', largeText);
+  }, [largeText]);
+
+  useEffect(() => {
+    if (highContrast) {
+      document.body.classList.add('high-contrast');
+    } else {
+      document.body.classList.remove('high-contrast');
+    }
+    localStorage.setItem('high-contrast', highContrast);
+  }, [highContrast]);
+
   // LILA Chatbot State
   const [lilaOpen, setLilaOpen] = useState(false);
   const [lilaMessages, setLilaMessages] = useState([
@@ -101,13 +123,23 @@ export default function Layout({ auth, onLogout, children }) {
     <>
       {/* ─── Top Accessibility & Welfare Bar ─── */}
       <div className="top-utility-bar">
-        <div className="container">
+        <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
             <span>🇮🇳 National Digital Chowk Welfare Initiative</span>
             <span style={{ color: 'rgba(255,255,255,0.3)' }}>|</span>
-            <a href="#accessibility" onClick={(e) => e.preventDefault()}>♿ Accessibility Options</a>
+            <button
+              onClick={() => setLargeText(t => !t)}
+              style={{ background: 'none', border: 'none', color: '#ffffff', cursor: 'pointer', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 700 }}
+            >
+              ♿ {largeText ? "Normal Text (A-)" : "Large Text (A+)"}
+            </button>
             <span style={{ color: 'rgba(255,255,255,0.3)' }}>|</span>
-            <span style={{ cursor: 'pointer' }}>🗣️ English / हिन्दी</span>
+            <button
+              onClick={() => setHighContrast(c => !c)}
+              style={{ background: 'none', border: 'none', color: '#ffffff', cursor: 'pointer', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 700 }}
+            >
+              🌓 {highContrast ? "Normal Theme" : "High Contrast"}
+            </button>
           </div>
           <div>
             <span>📞 Registry Helpline: <strong>+91 99999-XXXXX</strong></span>
@@ -241,7 +273,7 @@ export default function Layout({ auth, onLogout, children }) {
       {/* ─── LILA Chatbot Floating Drawer ─── */}
       <div className="lila-chatbot-container">
         {!lilaOpen ? (
-          <button className="lila-trigger-btn" onClick={() => setLilaOpen(true)}>
+          <button className="lila-trigger-btn lila-pulse-active" onClick={() => setLilaOpen(true)}>
             💬 Ask LILA Assistant
           </button>
         ) : (

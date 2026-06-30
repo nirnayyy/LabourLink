@@ -68,7 +68,7 @@ export default function Home({ data }) {
       </div>
 
       {/* ─── OFFICIAL FULL-BLEED BACKDROP HERO ─── */}
-      <section className="hero-backdrop-banner">
+      <section className="hero-backdrop-banner grid-mesh">
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(99, 102, 241, 0.25)', color: '#ffffff', fontSize: '0.8rem', fontWeight: 700, padding: '6px 14px', borderRadius: '4px', marginBottom: '24px', border: '1.5px solid rgba(255,255,255,0.25)', backdropFilter: 'blur(8px)' }}>
             <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: 'var(--secondary)' }}></span>
@@ -81,19 +81,48 @@ export default function Home({ data }) {
             Bridging the digital gap at local labor chowks. Specify your work requirements (loading, shifting, cleaning, digging) and our team personally contacts and confirms a verified worker. Zero commissions. Pay directly.
           </p>
 
-          <form onSubmit={handleSearchSubmit} className="hero-search-wrapper" style={{ marginBottom: '40px' }}>
-            <div className="hero-search-bar">
+          <form onSubmit={handleSearchSubmit} className="hero-search-wrapper" style={{ marginBottom: '24px' }}>
+            <div className="hero-search-bar" style={{ boxShadow: 'var(--shadow-lg)' }}>
               <input
                 type="text"
                 placeholder="Find daily workers (e.g. Electrician, Painter, Cleaning, Noida Sector 62)..."
                 value={searchVal}
                 onChange={e => setSearchVal(e.target.value)}
               />
-              <button type="submit" className="search-btn" aria-label="Search">
-                🔍
+              <button type="submit" className="search-btn shimmer-btn" aria-label="Search" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                Search
               </button>
             </div>
           </form>
+
+          {/* Popular Category Chips */}
+          <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', flexWrap: 'wrap', marginTop: '-8px', marginBottom: '40px', alignItems: 'center' }}>
+            <span style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.85)', fontWeight: 650 }}>Popular Searches:</span>
+            {['General Helper', 'Painter', 'Loader / Unloader', 'Plumbing', 'Electrical'].map(chip => (
+              <button
+                key={chip}
+                type="button"
+                onClick={() => {
+                  setSearchVal(chip);
+                  navigate(`/browse?search=${encodeURIComponent(chip)}`);
+                }}
+                style={{
+                  background: 'rgba(255,255,255,0.1)',
+                  border: '1.2px solid rgba(255,255,255,0.25)',
+                  color: '#ffffff',
+                  padding: '4px 12px',
+                  borderRadius: '99px',
+                  fontSize: '0.78rem',
+                  cursor: 'pointer',
+                  fontWeight: 700,
+                  transition: 'all 0.2s ease',
+                  backdropFilter: 'blur(8px)'
+                }}
+              >
+                {chip}
+              </button>
+            ))}
+          </div>
           
           <div className="hero-badges" style={{ justifyContent: 'center', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
             <span className="pill" style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', padding: '6px 12px', borderRadius: '4px', fontSize: '0.8rem', fontWeight: 650, display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#ffffff', backdropFilter: 'blur(8px)' }}>
