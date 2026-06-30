@@ -51,6 +51,11 @@ function App() {
       if (session) {
         await loadProfile(session.user.id);
       } else {
+        const currentAuth = loadState(AUTH_KEY, { role: null, user: null });
+        if (currentAuth.user && currentAuth.user.id && currentAuth.user.id.includes('00000000-0000-0000-0000-')) {
+          // Keep mock user signed in locally
+          return;
+        }
         const emptyAuth = { role: null, user: null };
         setAuth(emptyAuth);
         saveState(AUTH_KEY, emptyAuth);

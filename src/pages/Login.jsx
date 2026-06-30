@@ -72,31 +72,57 @@ export default function Login({ onLogin, data, onRegisterUser, onAddWorker }) {
       return;
     }
 
-    // Standard Email / Password login using Supabase Auth
+    // Standard Email / Password login
+    const trimmedEmail = email.trim().toLowerCase();
+    
+    // Bypass Supabase Auth for predefined mock accounts to prevent signup/email rate limits
+    if (
+      (trimmedEmail === ADMIN_EMAIL && password === ADMIN_PASSWORD) ||
+      (trimmedEmail === 'aarav@labourlink.com' && password === 'labour123') ||
+      (trimmedEmail === 'hirer@labourlink.com' && password === 'hirer123')
+    ) {
+      try {
+        let { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('email', trimmedEmail)
+          .single();
+
+        if (!profile) {
+          const isLabour = trimmedEmail === 'aarav@labourlink.com';
+          const mockPrefix = isLabour ? 'aarav' : trimmedEmail === ADMIN_EMAIL ? 'admin' : 'hirer';
+          const mockWorkerId = isLabour ? 'w-1' : null;
+          
+          profile = {
+            id: '00000000-0000-0000-0000-' + mockPrefix.padEnd(12, '0'),
+            email: trimmedEmail,
+            name: trimmedEmail === ADMIN_EMAIL ? 'System Admin' : isLabour ? 'Aarav Kumar' : 'Hirer Client',
+            phone: trimmedEmail === ADMIN_EMAIL ? '+91 99999-00000' : isLabour ? '+91 99999-11111' : '+91 99999-22222',
+            role: trimmedEmail === ADMIN_EMAIL ? 'admin' : isLabour ? 'labour' : 'hirer',
+            worker_id: mockWorkerId
+          };
+          
+          const { error: insErr } = await supabase.from('profiles').insert([profile]);
+          if (insErr) throw insErr;
+        }
+
+        onLogin({ role: profile.role, user: profile });
+      } catch (err) {
+        setMsg({ type: 'err', text: err.message || 'Error loading mock account profile.' });
+      }
+      return;
+    }
+
+    // Standard Email / Password login using Supabase Auth for real custom users
     try {
-      let authData = null;
       const { data: signInResult, error } = await supabase.auth.signInWithPassword({
-        email: email.trim().toLowerCase(),
+        email: trimmedEmail,
         password: password
       });
 
-      if (error) {
-        // If login failed, check if it matches mock credentials and auto-register
-        const trimmedEmail = email.trim().toLowerCase();
-        if (trimmedEmail === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-          authData = await autoRegisterMock(ADMIN_EMAIL, ADMIN_PASSWORD, 'System Admin', '+91 99999-00000', 'admin');
-        } else if (trimmedEmail === 'aarav@labourlink.com' && password === 'labour123') {
-          authData = await autoRegisterMock('aarav@labourlink.com', 'labour123', 'Aarav Kumar', '+91 99999-11111', 'labour', 'w-1');
-        } else if (trimmedEmail === 'hirer@labourlink.com' && password === 'hirer123') {
-          authData = await autoRegisterMock('hirer@labourlink.com', 'hirer123', 'Hirer Client', '+91 99999-22222', 'hirer');
-        } else {
-          throw error;
-        }
-      } else {
-        authData = signInResult;
-      }
+      if (error) throw error;
 
-      const userUuid = authData.user.id;
+      const userUuid = signInResult.user.id;
       const { data: profile } = await supabase
         .from('profiles')
         .select('*')
