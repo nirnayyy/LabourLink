@@ -13,6 +13,7 @@ import LabourDashboard from './pages/LabourDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import CustomerDashboard from './pages/CustomerDashboard';
 import { initialData, loadState, saveState } from './data';
+import { supabase } from './supabaseClient';
 
 const AUTH_KEY = 'auth';
 
@@ -35,42 +36,186 @@ function App() {
     navigate('/');
   }, [navigate]);
 
-  /* ─── Data state — seeded from initialData, persisted to localStorage ─── */
+  /* ─── Data state ─── */
   const [workers, setWorkers] = useState(() => loadState('workers', initialData.workers));
   const [reviews, setReviews] = useState(() => loadState('reviews', initialData.reviews));
   const [requests, setRequests] = useState(() => loadState('requests', initialData.requests));
   const [bookings, setBookings] = useState(() => loadState('bookings', initialData.bookings));
   const [users, setUsers] = useState(() => loadState('users', initialData.users));
 
-  // Persist whenever any data changes
-  useEffect(() => { saveState('workers', workers); }, [workers]);
-  useEffect(() => { saveState('reviews', reviews); }, [reviews]);
-  useEffect(() => { saveState('requests', requests); }, [requests]);
-  useEffect(() => { saveState('bookings', bookings); }, [bookings]);
-  useEffect(() => { saveState('users', users); }, [users]);
+  // Sync with Supabase on mount
+  useEffect(() => {
+    async function syncData() {
+      try {
+        const { data: dbWorkers } = await supabase.from('workers').select('*');
+        if (dbWorkers && dbWorkers.length) {
+          setWorkers(dbWorkers);
+          saveState('workers', dbWorkers);
+        }
+        
+        const { data: dbReviews } = await supabase.from('reviews').select('*');
+        if (dbReviews && dbReviews.length) {
+          setReviews(dbReviews);
+          saveState('reviews', dbReviews);
+        }
 
-  /* ─── Data mutation callbacks ─── */
-  const onAddWorker = useCallback((w) => setWorkers(prev => [...prev, w]), []);
-  const onUpdateWorker = useCallback((id, patch) => {
-    setWorkers(prev => prev.map(w => w.id === id ? { ...w, ...patch } : w));
+        const { data: dbRequests } = await supabase.from('requests').select('*');
+        if (dbRequests && dbRequests.length) {
+          setRequests(dbRequests);
+          saveState('requests', dbRequests);
+        }
+
+        const { data: dbBookings } = await supabase.from('bookings').select('*');
+        if (dbBookings && dbBookings.length) {
+          setBookings(dbBookings);
+          saveState('bookings', dbBookings);
+        }
+
+        const { data: dbProfiles } = await supabase.from('profiles').select('*');
+        if (dbProfiles && dbProfiles.length) {
+          const mappedUsers = dbProfiles.map(p => ({
+            id: p.id,
+            email: p.email,
+            name: p.name,
+            phone: p.phone,
+            role: p.role,
+            worker_id: p.worker_id
+          }));
+          setUsers(mappedUsers);
+          saveState('users', mappedUsers);
+        }
+      } catch (err) {
+        console.warn('Could not sync with Supabase backend:', err);
+      }
+    }
+    syncData();
   }, []);
 
-  const onAddReview = useCallback((r) => setReviews(prev => [...prev, r]), []);
-  const onUpdateReview = useCallback((id, patch) => {
-    setReviews(prev => prev.map(r => r.id === id ? { ...r, ...patch } : r));
+  /* ─── Data mutation callbacks with Supabase syncing ─── */
+  const onAddWorker = useCallback(async (w) => {
+    setWorkers(prev => {
+      const next = [...prev, w];
+      saveState('workers', next);
+      return next;
+    });
+    try {
+      await supabase.from('workers').insert([w]);
+    } catch (err) {
+      console.error('Failed to sync insert worker with Supabase:', err);
+    }
   }, []);
 
-  const onAddRequest = useCallback((r) => setRequests(prev => [...prev, r]), []);
-  const onUpdateRequest = useCallback((id, patch) => {
-    setRequests(prev => prev.map(r => r.id === id ? { ...r, ...patch } : r));
+  const onUpdateWorker = useCallback(async (id, patch) => {
+    setWorkers(prev => {
+      const next = prev.map(w => w.id === id ? { ...w, ...patch } : w);
+      saveState('workers', next);
+      return next;
+    });
+    try {
+      await supabase.from('workers').update(patch).eq('id', id);
+    } catch (err) {
+      console.error('Failed to sync update worker with Supabase:', err);
+    }
   }, []);
 
-  const onAddBooking = useCallback((b) => setBookings(prev => [...prev, b]), []);
-  const onUpdateBooking = useCallback((id, patch) => {
-    setBookings(prev => prev.map(b => b.id === id ? { ...b, ...patch } : b));
+  const onAddReview = useCallback(async (r) => {
+    setReviews(prev => {
+      const next = [...prev, r];
+      saveState('reviews', next);
+      return next;
+    });
+    try {
+      await supabase.from('reviews').insert([r]);
+    } catch (err) {
+      console.error('Failed to sync insert review with Supabase:', err);
+    }
   }, []);
 
-  const onRegisterUser = useCallback((u) => setUsers(prev => [...prev, u]), []);
+  const onUpdateReview = useCallback(async (id, patch) => {
+    setReviews(prev => {
+      const next = prev.map(r => r.id === id ? { ...r, ...patch } : r);
+      saveState('reviews', next);
+      return next;
+    });
+    try {
+      await supabase.from('reviews').update(patch).eq('id', id);
+    } catch (err) {
+      console.error('Failed to sync update review with Supabase:', err);
+    }
+  }, []);
+
+  const onAddRequest = useCallback(async (r) => {
+    setRequests(prev => {
+      const next = [...prev, r];
+      saveState('requests', next);
+      return next;
+    });
+    try {
+      await supabase.from('requests').insert([r]);
+    } catch (err) {
+      console.error('Failed to sync insert request with Supabase:', err);
+    }
+  }, []);
+
+  const onUpdateRequest = useCallback(async (id, patch) => {
+    setRequests(prev => {
+      const next = prev.map(r => r.id === id ? { ...r, ...patch } : r);
+      saveState('requests', next);
+      return next;
+    });
+    try {
+      await supabase.from('requests').update(patch).eq('id', id);
+    } catch (err) {
+      console.error('Failed to sync update request with Supabase:', err);
+    }
+  }, []);
+
+  const onAddBooking = useCallback(async (b) => {
+    setBookings(prev => {
+      const next = [...prev, b];
+      saveState('bookings', next);
+      return next;
+    });
+    try {
+      await supabase.from('bookings').insert([b]);
+    } catch (err) {
+      console.error('Failed to sync insert booking with Supabase:', err);
+    }
+  }, []);
+
+  const onUpdateBooking = useCallback(async (id, patch) => {
+    setBookings(prev => {
+      const next = prev.map(b => b.id === id ? { ...b, ...patch } : b);
+      saveState('bookings', next);
+      return next;
+    });
+    try {
+      await supabase.from('bookings').update(patch).eq('id', id);
+    } catch (err) {
+      console.error('Failed to sync update booking with Supabase:', err);
+    }
+  }, []);
+
+  const onRegisterUser = useCallback(async (u) => {
+    setUsers(prev => {
+      const next = [...prev, u];
+      saveState('users', next);
+      return next;
+    });
+    try {
+      const profileUuid = u.id?.includes('u-') ? '00000000-0000-0000-0000-' + u.id.replace('u-', '').padEnd(12, '0').slice(0, 12) : '00000000-0000-0000-0000-000000000000';
+      await supabase.from('profiles').insert([{
+        id: profileUuid,
+        email: u.email,
+        name: u.name,
+        phone: u.phone,
+        role: u.role,
+        worker_id: u.worker_id
+      }]);
+    } catch (err) {
+      console.error('Failed to sync profile registration with Supabase:', err);
+    }
+  }, []);
 
   /* ─── Composite data object passed to pages ─── */
   const data = {
