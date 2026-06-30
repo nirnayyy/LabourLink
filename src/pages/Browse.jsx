@@ -8,7 +8,7 @@ export default function Browse({ data }) {
   const [searchParams] = useSearchParams();
   const [areaFilter, setAreaFilter] = useState('');
   const [typeFilter, setTypeFilter] = useState(searchParams.get('type') || '');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
   const [layoutMode, setLayoutMode] = useState('grid'); // 'grid' | 'list'
 
   const published = workers.filter(w => w.is_published && !w.is_blacklisted);

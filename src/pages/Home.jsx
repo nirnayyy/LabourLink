@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Star, Shield, Info, Check, Calendar, Briefcase, Activity, FileText } from '../components/Icons';
 import { stars, money } from '../data';
 
@@ -12,6 +12,10 @@ export default function Home({ data }) {
 
   const totalJobs = publishedWorkers.reduce((s, w) => s + (w.total_jobs || 0), 0);
   const publishedReviews = reviews.filter(r => r.status === 'published');
+
+  // Search query state
+  const [searchVal, setSearchVal] = useState('');
+  const navigate = useNavigate();
 
   // Wage calculator state
   const [calcWorkType, setCalcWorkType] = useState('General Helper');
@@ -34,6 +38,15 @@ export default function Home({ data }) {
     return () => clearInterval(timer);
   }, [tickerItems.length]);
 
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchVal.trim()) {
+      navigate(`/browse?search=${encodeURIComponent(searchVal.trim())}`);
+    } else {
+      navigate('/browse');
+    }
+  };
+
   return (
     <div className="fade-in" style={{ position: 'relative', overflow: 'hidden' }}>
       
@@ -54,57 +67,47 @@ export default function Home({ data }) {
         </div>
       </div>
 
-      {/* ─── HERO ─── */}
-      <section style={{ padding: '80px 0 100px', borderBottom: '1px solid var(--border)', position: 'relative' }}>
-        <div className="container hero-grid" style={{ position: 'relative', zIndex: 1 }}>
-          <div>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'var(--primary-light)', color: 'var(--primary)', fontSize: '0.8rem', fontWeight: 700, padding: '6px 14px', borderRadius: '4px', marginBottom: '24px', border: '1.5px solid var(--primary-border)' }}>
-              <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: 'var(--secondary)' }}></span>
-              Hyperlocal Daily Wage Network · Greater Noida
-            </div>
-            <h1 style={{ marginBottom: '24px', lineHeight: '1.1', fontSize: 'clamp(2.5rem, 6vw, 3.8rem)' }}>
-              Need daily helpers? <span style={{ background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Get vetted, honest workers.</span>
-            </h1>
-            <p className="lead" style={{ marginBottom: '36px', color: 'var(--muted)', fontSize: '1.1rem' }}>
-              Bridging the digital gap at local labor chowks. Specify your work requirements (loading, shifting, cleaning, digging) and our team <strong>personally contacts and confirms a verified worker</strong>. Zero commissions. Pay directly.
-            </p>
-            <div className="hero-cta" style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-              <Link to="/post-job" className="btn btn-primary" style={{ padding: '16px 32px', borderRadius: 'var(--radius-sm)' }}>
-                <FileText size={18} />
-                Hire a Worker Today
-              </Link>
-              <Link to="/browse" className="btn btn-ghost" style={{ padding: '16px 32px', borderRadius: 'var(--radius-sm)', border: '1.5px solid var(--border)' }}>
-                <Briefcase size={18} />
-                Browse Directory
-              </Link>
-            </div>
-            <div style={{ marginTop: '24px' }}>
-              <Link to="/login?role=labour&mode=signup" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'var(--primary)', fontWeight: 700, fontSize: '0.9rem', textDecoration: 'none' }}>
-                Looking for daily wage work? Join as a registered worker today →
-              </Link>
-            </div>
-            
-            <div className="hero-badges" style={{ marginTop: '48px', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-              <span className="pill" style={{ background: '#ffffff', border: '1px solid var(--border)', padding: '6px 12px', borderRadius: '4px', fontSize: '0.8rem', fontWeight: 650, display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'var(--ink)' }}>
-                <Shield size={14} style={{ color: 'var(--primary)' }} />
-                In-Person Verified
-              </span>
-              <span className="pill" style={{ background: '#ffffff', border: '1px solid var(--border)', padding: '6px 12px', borderRadius: '4px', fontSize: '0.8rem', fontWeight: 650, display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'var(--ink)' }}>
-                <Calendar size={14} style={{ color: 'var(--primary)' }} />
-                9 PM Confirmation SLA
-              </span>
-              <span className="pill" style={{ background: '#ffffff', border: '1px solid var(--border)', padding: '6px 12px', borderRadius: '4px', fontSize: '0.8rem', fontWeight: 650, display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'var(--ink)' }}>
-                <Star size={14} style={{ color: 'var(--primary)' }} />
-                Verified Ratings
-              </span>
-            </div>
+      {/* ─── OFFICIAL FULL-BLEED BACKDROP HERO ─── */}
+      <section className="hero-backdrop-banner">
+        <div className="container" style={{ position: 'relative', zIndex: 1 }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(99, 102, 241, 0.25)', color: '#ffffff', fontSize: '0.8rem', fontWeight: 700, padding: '6px 14px', borderRadius: '4px', marginBottom: '24px', border: '1.5px solid rgba(255,255,255,0.25)', backdropFilter: 'blur(8px)' }}>
+            <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: 'var(--secondary)' }}></span>
+            Official Greater Noida Registry Portal
           </div>
-          
-          <div className="hero-photo" style={{ border: '1.5px solid var(--border)', borderRadius: 'var(--radius-lg)', overflow: 'hidden', boxShadow: 'var(--shadow-lg)', position: 'relative' }}>
-            <img src="/assets/hero-chowk.jpeg" alt="Daily wage workers at a labour chowk in Greater Noida" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            <div style={{ position: 'absolute', bottom: '20px', left: '20px', right: '20px', background: 'rgba(11, 15, 25, 0.85)', padding: '14px 20px', borderRadius: 'var(--radius-md)', color: '#ffffff', fontSize: '0.82rem', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.15)', boxShadow: 'var(--shadow-lg)' }}>
-              📍 <strong>Kasna Chowk Registry Center, Greater Noida</strong>
+          <h1>Welcome to Noida's Daily-Wage Worker Portal</h1>
+          <p className="lead">
+            YOUR DIRECT HYPERLOCAL LABOR NETWORK STARTS HERE!
+            <br />
+            Bridging the digital gap at local labor chowks. Specify your work requirements (loading, shifting, cleaning, digging) and our team personally contacts and confirms a verified worker. Zero commissions. Pay directly.
+          </p>
+
+          <form onSubmit={handleSearchSubmit} className="hero-search-wrapper" style={{ marginBottom: '40px' }}>
+            <div className="hero-search-bar">
+              <input
+                type="text"
+                placeholder="Find daily workers (e.g. Electrician, Painter, Cleaning, Noida Sector 62)..."
+                value={searchVal}
+                onChange={e => setSearchVal(e.target.value)}
+              />
+              <button type="submit" className="search-btn" aria-label="Search">
+                🔍
+              </button>
             </div>
+          </form>
+          
+          <div className="hero-badges" style={{ justifyContent: 'center', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+            <span className="pill" style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', padding: '6px 12px', borderRadius: '4px', fontSize: '0.8rem', fontWeight: 650, display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#ffffff', backdropFilter: 'blur(8px)' }}>
+              <Shield size={14} style={{ color: 'var(--primary)' }} />
+              In-Person Verified
+            </span>
+            <span className="pill" style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', padding: '6px 12px', borderRadius: '4px', fontSize: '0.8rem', fontWeight: 650, display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#ffffff', backdropFilter: 'blur(8px)' }}>
+              <Calendar size={14} style={{ color: 'var(--primary)' }} />
+              9 PM Confirmation SLA
+            </span>
+            <span className="pill" style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', padding: '6px 12px', borderRadius: '4px', fontSize: '0.8rem', fontWeight: 650, display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#ffffff', backdropFilter: 'blur(8px)' }}>
+              <Star size={14} style={{ color: 'var(--primary)' }} />
+              Verified Ratings
+            </span>
           </div>
         </div>
       </section>
@@ -217,7 +220,7 @@ export default function Home({ data }) {
                   </div>
                   <div style={{ fontSize: '0.85rem', color: 'var(--muted)', display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '14px' }}>📍 {w.area}</div>
                   
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid var(--border)', paddingTop: '14px', marginTop: 'auto' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyCentert: 'space-between', borderTop: '1px solid var(--border)', paddingTop: '14px', marginTop: 'auto', justifyContent: 'space-between' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                       <span style={{ fontSize: '1rem' }}>{stars(w.rating_avg)}</span>
                       <strong style={{ color: 'var(--ink)', fontSize: '0.9rem' }}>{Number(w.rating_avg).toFixed(1)}</strong>
@@ -254,7 +257,7 @@ export default function Home({ data }) {
               </h3>
               
               <div className="field" style={{ marginBottom: '20px' }}>
-                <label style={{ fontSize: '0.82rem', fontWeight: 700 }}>Select Work Type</label>
+                <label style={{ fontSize: '0.82rem', fontWeight: 750 }}>Select Work Type</label>
                 <select value={calcWorkType} onChange={e => setCalcWorkType(e.target.value)} style={{ padding: '10px 14px', outline: 'none' }}>
                   {wages.map(w => (
                     <option key={w.work_type} value={w.work_type}>{w.work_type}</option>

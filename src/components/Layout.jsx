@@ -8,6 +8,18 @@ export default function Layout({ auth, onLogout, children }) {
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
 
+  // LILA Chatbot State
+  const [lilaOpen, setLilaOpen] = useState(false);
+  const [lilaMessages, setLilaMessages] = useState([
+    { sender: 'bot', text: 'Welcome to LabourLink! I am LILA, your interactive assistant. How can I help you today?' }
+  ]);
+  const [lilaChips, setLilaChips] = useState([
+    "👨‍🌾 Find a Local Worker",
+    "🧹 Register as a Worker",
+    "📋 Post a Job Need",
+    "📞 Call Helpline Desk"
+  ]);
+
   // Close dropdown on click outside
   useEffect(() => {
     function handleClickOutside(event) {
@@ -27,6 +39,55 @@ export default function Layout({ auth, onLogout, children }) {
     setProfileOpen(false);
   };
 
+  const handleChipClick = (chip) => {
+    // Add user message
+    setLilaMessages(prev => [...prev, { sender: 'user', text: chip }]);
+
+    // Trigger dynamic bot response
+    setTimeout(() => {
+      let botText = "";
+      let nextChips = [];
+
+      if (chip === "👨‍🌾 Find a Local Worker") {
+        botText = "You can search and filter workers by skills or Noida neighborhoods in our directory. Reliability scores are updated after every daily wage job. Click below to browse:";
+        nextChips = ["🔍 Open Directory", "↩️ Main Options"];
+      } else if (chip === "🔍 Open Directory") {
+        navigate('/browse');
+        setLilaOpen(false);
+        return;
+      } else if (chip === "🧹 Register as a Worker") {
+        botText = "To register as a worker and receive direct daily work calls from clients, please register on our portal. Zero platform cuts taken! No smartphone is required for workers to receive calls.";
+        nextChips = ["📝 Worker Sign Up", "↩️ Main Options"];
+      } else if (chip === "📝 Worker Sign Up") {
+        navigate('/login?role=labour&mode=signup');
+        setLilaOpen(false);
+        return;
+      } else if (chip === "📋 Post a Job Need") {
+        botText = "Post a job request before 8:00 PM, and our student coordinators will telephone you and confirm a helper by 9:00 PM. Zero platform commissions.";
+        nextChips = ["📋 Start Job Request", "↩️ Main Options"];
+      } else if (chip === "📋 Start Job Request") {
+        navigate('/post-job');
+        setLilaOpen(false);
+        return;
+      } else if (chip === "📞 Call Helpline Desk") {
+        botText = "You can contact our Bennett University social mission desk directly at +91 99999-XXXXX (Active 9 AM to 9 PM daily). We are here to help!";
+        nextChips = ["↩️ Main Options"];
+      } else {
+        // Default or Main Options
+        botText = "How else can LILA assist you today?";
+        nextChips = [
+          "👨‍🌾 Find a Local Worker",
+          "🧹 Register as a Worker",
+          "📋 Post a Job Need",
+          "📞 Call Helpline Desk"
+        ];
+      }
+
+      setLilaMessages(prev => [...prev, { sender: 'bot', text: botText }]);
+      setLilaChips(nextChips);
+    }, 500);
+  };
+
   const dashPath =
     auth.role === 'admin'
       ? '/admin'
@@ -38,6 +99,22 @@ export default function Layout({ auth, onLogout, children }) {
 
   return (
     <>
+      {/* ─── Top Accessibility & Welfare Bar ─── */}
+      <div className="top-utility-bar">
+        <div className="container">
+          <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+            <span>🇮🇳 National Digital Chowk Welfare Initiative</span>
+            <span style={{ color: 'rgba(255,255,255,0.3)' }}>|</span>
+            <a href="#accessibility" onClick={(e) => e.preventDefault()}>♿ Accessibility Options</a>
+            <span style={{ color: 'rgba(255,255,255,0.3)' }}>|</span>
+            <span style={{ cursor: 'pointer' }}>🗣️ English / हिन्दी</span>
+          </div>
+          <div>
+            <span>📞 Registry Helpline: <strong>+91 99999-XXXXX</strong></span>
+          </div>
+        </div>
+      </div>
+
       {/* ─── Header ─── */}
       <header className="site-header">
         <div className="container nav">
@@ -160,6 +237,46 @@ export default function Layout({ auth, onLogout, children }) {
 
       {/* ─── Page content ─── */}
       <main>{children}</main>
+
+      {/* ─── LILA Chatbot Floating Drawer ─── */}
+      <div className="lila-chatbot-container">
+        {!lilaOpen ? (
+          <button className="lila-trigger-btn" onClick={() => setLilaOpen(true)}>
+            💬 Ask LILA Assistant
+          </button>
+        ) : (
+          <div className="lila-chat-drawer">
+            <div className="lila-chat-header">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: 'var(--success)' }}></span>
+                <strong style={{ fontSize: '0.92rem' }}>LILA Chatbot (Online)</strong>
+              </div>
+              <button onClick={() => setLilaOpen(false)} style={{ background: 'none', border: 'none', color: '#ffffff', cursor: 'pointer', fontSize: '1.1rem', padding: '2px' }}>×</button>
+            </div>
+            
+            <div className="lila-chat-body">
+              {lilaMessages.map((msg, idx) => (
+                <div key={idx} className={`lila-message ${msg.sender}`}>
+                  {msg.text}
+                </div>
+              ))}
+            </div>
+
+            <div className="lila-chat-footer">
+              <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--muted-light)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                Select an Option:
+              </div>
+              <div className="lila-chips-container">
+                {lilaChips.map((chip, idx) => (
+                  <button key={idx} className="lila-chip" onClick={() => handleChipClick(chip)}>
+                    {chip}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* ─── Footer ─── */}
       <footer className="site-footer">
