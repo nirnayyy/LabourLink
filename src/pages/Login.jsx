@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Shield, Info, Check, User } from '../components/Icons';
 import { uid } from '../data';
+import { supabase } from '../supabaseClient';
 
 const ADMIN_EMAIL = 'admin@labourlink.com';
 const ADMIN_PASSWORD = 'admin123';
@@ -50,20 +51,9 @@ export default function Login({ onLogin, data, onRegisterUser, onAddWorker }) {
   };
   const pwStrength = getPasswordStrength();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setMsg(null);
-
-    // Admin Credentials
-    if (role === 'admin') {
-      if (email.trim().toLowerCase() === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-        const adminUser = data.users.find(u => u.role === 'admin');
-        onLogin({ role: 'admin', user: adminUser || { email: ADMIN_EMAIL, name: 'Admin' } });
-      } else {
-        setMsg({ type: 'err', text: 'Invalid admin credentials. Admin log-in is restricted.' });
-      }
-      return;
-    }
 
     // Phone / OTP login simulation
     if (loginMethod === 'phone') {
@@ -73,84 +63,146 @@ export default function Login({ onLogin, data, onRegisterUser, onAddWorker }) {
         return;
       }
       // Match user by phone number
-      const user = data.users.find(u => u.phone === phone.trim() && u.role === role);
-      if (user) {
-        onLogin({ role, user });
+      const { data: profiles } = await supabase.from('profiles').select('*').eq('phone', phone.trim()).eq('role', role);
+      if (profiles && profiles.length) {
+        onLogin({ role, user: profiles[0] });
       } else {
         setMsg({ type: 'err', text: 'Phone number not registered. Please register first.' });
       }
       return;
     }
 
-    // Standard Email / Password login
-    const user = data.users.find(
-      u => u.email.toLowerCase() === email.trim().toLowerCase()
-        && u.password === password
-        && u.role === role
-    );
-    if (user) {
-      onLogin({ role, user });
-    } else {
-      setMsg({ type: 'err', text: 'Invalid email or password. Please try again or sign up.' });
+    // Standard Email / Password login using Supabase Auth
+    try {
+      let authData = null;
+      const { data: signInResult, error } = await supabase.auth.signInWithPassword({
+        email: email.trim().toLowerCase(),
+        password: password
+      });
+
+      if (error) {
+        // If login failed, check if it matches mock credentials and auto-register
+        const trimmedEmail = email.trim().toLowerCase();
+        if (trimmedEmail === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+          authData = await autoRegisterMock(ADMIN_EMAIL, ADMIN_PASSWORD, 'System Admin', '+91 99999-00000', 'admin');
+        } else if (trimmedEmail === 'aarav@labourlink.com' && password === 'labour123') {
+          authData = await autoRegisterMock('aarav@labourlink.com', 'labour123', 'Aarav Kumar', '+91 99999-11111', 'labour', 'w-1');
+        } else if (trimmedEmail === 'hirer@labourlink.com' && password === 'hirer123') {
+          authData = await autoRegisterMock('hirer@labourlink.com', 'hirer123', 'Hirer Client', '+91 99999-22222', 'hirer');
+        } else {
+          throw error;
+        }
+      } else {
+        authData = signInResult;
+      }
+
+      const userUuid = authData.user.id;
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userUuid)
+        .single();
+
+      if (profile) {
+        onLogin({ role: profile.role, user: profile });
+      } else {
+        setMsg({ type: 'err', text: 'Authentication succeeded, but profile was not found.' });
+      }
+    } catch (err) {
+      setMsg({ type: 'err', text: err.message || 'Invalid email or password. Please try again.' });
     }
   };
 
-  const handleSignup = (e) => {
+  const autoRegisterMock = async (mockEmail, mockPassword, mockName, mockPhone, mockRole, mockWorkerId = null) => {
+    // 1. Sign up user in Supabase Auth
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+      email: mockEmail,
+      password: mockPassword
+    });
+    if (signUpError) throw signUpError;
+
+    // 2. Insert profile record
+    const profile = {
+      id: signUpData.user.id,
+      email: mockEmail,
+      name: mockName,
+      phone: mockPhone,
+      role: mockRole,
+      worker_id: mockWorkerId
+    };
+    await supabase.from('profiles').insert([profile]);
+    return signUpData;
+  };
+
+  const handleSignup = async (e) => {
     e.preventDefault();
     setMsg(null);
 
     if (role === 'admin') {
-      setMsg({ type: 'err', text: 'Admin accounts cannot be created.' });
+      setMsg({ type: 'err', text: 'Admin accounts cannot be self-registered.' });
       return;
     }
 
-    if (data.users.find(u => u.email.toLowerCase() === email.trim().toLowerCase())) {
-      setMsg({ type: 'err', text: 'An account with this email already exists. Try logging in.' });
-      return;
-    }
+    try {
+      // 1. Sign up user in Supabase Auth
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+        email: email.trim().toLowerCase(),
+        password: password
+      });
+      if (signUpError) throw signUpError;
 
-    const userId = uid('u-');
-    const newUser = {
-      id: userId,
-      email: email.trim().toLowerCase(),
-      password,
-      name: name.trim(),
-      phone: phone.trim(),
-      role,
-    };
+      const userUuid = signUpData.user.id;
 
-    if (role === 'labour') {
-      const workTypes = workTypesStr.split(',').map(s => s.trim()).filter(Boolean);
-      if (!workTypes.length || !area) {
-        setMsg({ type: 'err', text: 'Please select your area and add registered skills.' });
-        return;
+      // 2. If worker, register in workers table first
+      let workerId = null;
+      if (role === 'labour') {
+        const workTypes = workTypesStr.split(',').map(s => s.trim()).filter(Boolean);
+        if (!workTypes.length || !area) {
+          setMsg({ type: 'err', text: 'Please select your area and add registered skills.' });
+          return;
+        }
+        workerId = uid('w');
+
+        const newWorker = {
+          id: workerId,
+          name: name.trim(),
+          phone: phone.trim(),
+          area,
+          locality: '',
+          photo_url: '/assets/worker1.jpeg',
+          work_types: workTypes,
+          availability_status: 'available',
+          rating_avg: 0,
+          total_reviews: 0,
+          total_jobs: 0,
+          reliability_score: 50,
+          registered_by: 'Self-registered',
+          is_blacklisted: false,
+          is_published: true,
+          created_at: new Date().toISOString(),
+        };
+        const { error: workerErr } = await supabase.from('workers').insert([newWorker]);
+        if (workerErr) throw workerErr;
+        onAddWorker(newWorker);
       }
-      const workerId = uid('w');
-      newUser.worker_id = workerId;
 
-      const newWorker = {
-        id: workerId,
+      // 3. Insert profile record
+      const newProfile = {
+        id: userUuid,
+        email: email.trim().toLowerCase(),
         name: name.trim(),
         phone: phone.trim(),
-        area,
-        locality: '',
-        photo_url: '/assets/worker1.jpeg',
-        work_types: workTypes,
-        availability_status: 'available',
-        rating_avg: 0,
-        total_reviews: 0,
-        total_jobs: 0,
-        reliability_score: 50,
-        registered_by: 'Self-registered',
-        is_blacklisted: false,
-        is_published: true,
-        created_at: new Date().toISOString(),
+        role,
+        worker_id: workerId
       };
-      onAddWorker(newWorker);
-    }
+      const { error: profileErr } = await supabase.from('profiles').insert([newProfile]);
+      if (profileErr) throw profileErr;
 
-    onRegisterUser(newUser);
-    onLogin({ role, user: newUser });
+      onRegisterUser(newProfile);
+      onLogin({ role, user: newProfile });
+    } catch (err) {
+      setMsg({ type: 'err', text: err.message || 'Signup failed. Please try again.' });
+    }
   };
 
   // Quick Account Auto-filler

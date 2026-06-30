@@ -192,7 +192,7 @@ export default function CustomerDashboard({ auth, data, onUpdateRequest, onAddRe
             <h2>Welcome, {auth.user?.name || 'Customer'} 🏠</h2>
           </div>
           <div>
-            <Link to="/post-job" className="btn btn-primary btn-sm">📋 Post a New Job</Link>
+            <Link to="/post-job" className="btn btn-primary btn-sm" style={{ borderRadius: '4px' }}>📋 Post a New Job</Link>
           </div>
         </div>
 
@@ -210,12 +210,14 @@ export default function CustomerDashboard({ auth, data, onUpdateRequest, onAddRe
           </aside>
 
           {/* Main Panel Content */}
-          <div className="card" style={{ background: '#ffffff', border: '1px solid var(--border)', padding: '32px' }}>
+          <div className="card glass-card" style={{ background: '#ffffff', border: '1px solid var(--border)', padding: '32px', borderRadius: 'var(--radius-lg)' }}>
             
             {/* ─── Jobs Tab ─── */}
             {tab === 'jobs' && (
               <div className="fade-in">
-                <h3 style={{ borderBottom: '1px solid var(--border)', paddingBottom: '14px', marginBottom: '24px' }}>My Job Posting Registry</h3>
+                <h3 style={{ borderBottom: '1px solid var(--border)', paddingBottom: '14px', marginBottom: '24px', color: 'var(--ink)' }}>
+                  My Job Posting Registry
+                </h3>
                 
                 {myRequests.length ? myRequests.map(j => {
                   const agreedWorker = j.agreed_worker_id ? data.workers.find(w => w.id === j.agreed_worker_id) : null;
@@ -225,7 +227,7 @@ export default function CustomerDashboard({ auth, data, onUpdateRequest, onAddRe
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', flexWrap: 'wrap', gap: 12 }}>
                         <div>
                           <h4 style={{ margin: '0 0 8px', fontSize: '1.2rem', color: 'var(--ink)' }}>
-                            {j.work_type} — <span style={{ color: 'var(--secondary)' }}>{j.ref_code}</span>
+                            {j.work_type} — <span style={{ color: 'var(--primary)' }}>{j.ref_code}</span>
                           </h4>
                           <div style={{ fontSize: '0.9rem', color: 'var(--muted)' }}>
                             📍 <strong>{j.area}</strong> · {j.location} · 📅 Date: {fmtDate(j.job_date)} · Offered: <strong>{money(j.wage_offered)}/day</strong>
@@ -234,315 +236,262 @@ export default function CustomerDashboard({ auth, data, onUpdateRequest, onAddRe
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                           <span className={`status-chip ${j.status}`}>{j.status}</span>
                           {(j.status === 'pending' || j.status === 'confirmed') && (
-                            <button className="btn btn-ghost btn-sm" onClick={() => handleCancel(j.id)} style={{ padding: '6px 12px', fontSize: '0.78rem' }}>
+                            <button className="btn btn-ghost btn-sm" onClick={() => handleCancel(j.id)} style={{ padding: '6px 12px', fontSize: '0.78rem', borderRadius: '4px' }}>
                               Cancel
                             </button>
                           )}
                         </div>
                       </div>
 
-                      {/* Visual Pipeline timeline */}
+                      {/* Pipeline timeline */}
                       <div style={{ display: 'flex', justifyContent: 'space-between', background: 'var(--bg)', border: '1px solid var(--border)', padding: '12px 20px', borderRadius: 'var(--radius-sm)', margin: '20px 0', fontSize: '0.8rem', color: 'var(--muted)', fontWeight: 700 }}>
                         <span style={{ color: 'var(--primary)' }}>✓ Posted</span>
                         <span style={{ color: j.offers?.length > 0 || j.agreed_worker_id ? 'var(--primary)' : 'var(--muted-light)' }}>
                           {j.offers?.length > 0 || j.agreed_worker_id ? '✓ Negotiating' : 'Negotiating'}
                         </span>
                         <span style={{ color: j.agreed_worker_id ? 'var(--primary)' : 'var(--muted-light)' }}>
-                          {j.agreed_worker_id ? '✓ Agreed' : 'Agreed'}
+                          {j.agreed_worker_id ? '✓ Wage Agreed' : 'Wage Agreed'}
                         </span>
                         <span style={{ color: j.is_unlocked ? 'var(--primary)' : 'var(--muted-light)' }}>
-                          {j.is_unlocked ? '✓ Details Unlocked' : 'Details Unlocked'}
-                        </span>
-                        <span style={{ color: j.status === 'completed' ? 'var(--primary)' : 'var(--muted-light)' }}>
-                          {j.status === 'completed' ? '✓ Finished' : 'Finished'}
+                          {j.is_unlocked ? '✓ Verified Dispatch' : 'Verified Dispatch'}
                         </span>
                       </div>
 
-                      {/* Negotiation block */}
-                      {j.status === 'pending' && (
-                        <div style={{ background: '#f8fafc', border: '1px solid var(--border)', padding: '20px', borderRadius: 'var(--radius-md)', marginTop: '16px' }}>
-                          <h5 style={{ margin: '0 0 16px', fontSize: '0.95rem', fontWeight: 700, color: 'var(--ink)' }}>
-                            🤝 Wage Negotiation Desk
+                      {/* Offers Negotiation section */}
+                      {j.status === 'pending' && (j.offers || []).length > 0 && (
+                        <div style={{ background: '#f8fafc', padding: '20px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', marginTop: '16px' }}>
+                          <h5 style={{ margin: '0 0 12px', fontSize: '0.88rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                            💬 Active Worker Bids &amp; Wage Proposals
                           </h5>
-
-                          {!j.agreed_worker_id ? (
-                            <div>
-                              {j.offers && j.offers.length > 0 ? (
-                                j.offers.map(o => {
-                                  const key = `${j.id}-${o.worker_id}`;
-                                  const lastMsg = o.history[o.history.length - 1];
-                                  const isWorkerTurn = lastMsg.sender === 'worker';
-
-                                  return (
-                                    <div key={o.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12, padding: '12px 0', borderBottom: '1px solid var(--border)' }}>
-                                      <div>
-                                        <strong style={{ color: 'var(--ink)' }}>{o.worker_name}</strong>
-                                        <div className="muted" style={{ fontSize: '0.82rem', marginTop: '2px' }}>
-                                          Bid: <strong style={{ color: 'var(--secondary)' }}>{money(o.wage)}</strong> · 
-                                          {isWorkerTurn ? ' Counter-offered' : ' Propose Sent'}
-                                        </div>
-                                      </div>
-                                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                                        {isWorkerTurn ? (
-                                          <>
-                                            <button className="btn btn-primary btn-sm" onClick={() => acceptWorkerOffer(j.id, o.worker_id, o.wage)}>
-                                              Accept {money(o.wage)}
-                                            </button>
-                                            <div style={{ display: 'flex', gap: '6px' }}>
-                                              <input
-                                                type="number"
-                                                placeholder="Counter ₹"
-                                                value={counterInputs[key] || ''}
-                                                onChange={e => setCounterInputs(prev => ({ ...prev, [key]: e.target.value }))}
-                                                style={{ width: '100px', padding: '8px 10px', fontSize: '0.82rem', borderRadius: '6px', border: '1px solid var(--border)', outline: 'none' }}
-                                              />
-                                              <button className="btn btn-ghost btn-sm" onClick={() => submitCounterOffer(j.id, o.worker_id, o.wage)} style={{ padding: '8px 14px' }}>
-                                                Counter
-                                              </button>
-                                            </div>
-                                          </>
-                                        ) : (
-                                          <span className="muted" style={{ fontSize: '0.82rem', fontStyle: 'italic' }}>
-                                            Waiting for worker response...
-                                          </span>
-                                        )}
-                                      </div>
-                                    </div>
-                                  );
-                                })
-                              ) : (
-                                <p className="muted" style={{ margin: 0, fontSize: '0.88rem' }}>
-                                  No bids received yet. Nearby verified workers are being coordinated by the team.
-                                </p>
-                              )}
-                            </div>
-                          ) : (
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
-                              <div>
-                                <span style={{ color: 'var(--primary)', fontWeight: 700, display: 'block', fontSize: '0.95rem' }}>✓ Wage Agreed!</span>
-                                <div style={{ fontSize: '0.88rem', marginTop: '4px' }}>
-                                  You booked <strong>{agreedWorker?.name}</strong> at <strong>{money(j.agreed_wage)}/day</strong>.
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                            {j.offers.map(o => (
+                              <div key={o.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, background: '#ffffff', padding: '12px 16px', borderRadius: '4px', border: '1px solid var(--border)' }}>
+                                <div>
+                                  <strong style={{ color: 'var(--ink)' }}>{o.worker_name}</strong>
+                                  <span style={{ color: 'var(--muted-light)', fontSize: '0.78rem', marginLeft: '8px' }}>Bid: <strong>{money(o.wage)}/day</strong></span>
+                                </div>
+                                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                  {o.status === 'agreed' ? (
+                                    <span style={{ color: 'var(--success)', fontWeight: 700, fontSize: '0.82rem' }}>Accepted</span>
+                                  ) : (
+                                    <>
+                                      <button className="btn btn-primary btn-sm" onClick={() => acceptWorkerOffer(j.id, o.worker_id, o.wage)} style={{ borderRadius: '4px' }}>
+                                        Accept Bid
+                                      </button>
+                                      <span style={{ fontSize: '0.8rem', color: 'var(--muted)' }}>or counter:</span>
+                                      <input
+                                        type="number"
+                                        placeholder="₹ Counter"
+                                        value={counterInputs[`${j.id}-${o.worker_id}`] || ''}
+                                        onChange={e => setCounterInputs({ ...counterInputs, [`${j.id}-${o.worker_id}`]: e.target.value })}
+                                        style={{ width: '90px', padding: '5px 10px', border: '1.5px solid var(--border)', borderRadius: '4px', outline: 'none' }}
+                                      />
+                                      <button className="btn btn-ghost btn-sm" onClick={() => submitCounterOffer(j.id, o.worker_id, o.wage)} style={{ borderRadius: '4px' }}>
+                                        Submit Counter
+                                      </button>
+                                    </>
+                                  )}
                                 </div>
                               </div>
-                              {!j.is_unlocked ? (
-                                <button className="btn btn-secondary btn-sm" onClick={() => setPayingJob(j)} style={{ padding: '10px 18px' }}>
-                                  💳 Pay Unlock Fee (₹10)
-                                </button>
-                              ) : (
-                                <div style={{ background: 'var(--success-light)', color: 'var(--success-text)', padding: '6px 14px', borderRadius: '99px', fontSize: '0.82rem', fontWeight: 700, border: '1px solid var(--success-border)' }}>
-                                  🔓 Unlocked! Direct Contact: {agreedWorker?.phone}
-                                </div>
-                              )}
-                            </div>
-                          )}
+                            ))}
+                          </div>
                         </div>
                       )}
 
-                      {/* Finish Confirmation Trigger */}
-                      {j.status === 'confirmed' && agreedWorker && (
-                        <div style={{ marginTop: 16, padding: 18, background: 'var(--primary-light)', borderRadius: 'var(--radius-md)', border: '1px solid var(--primary-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
-                          <div style={{ fontSize: '0.9rem' }}>
-                            <strong>Confirmed Worker: {agreedWorker.name}</strong> · Wage: {money(j.agreed_wage)} · Contact: {agreedWorker.phone}
+                      {/* Pay to Unlock Checkout panel */}
+                      {j.status === 'pending' && j.agreed_worker_id && !j.is_unlocked && agreedWorker && (
+                        <div style={{ marginTop: '20px', background: 'var(--primary-light)', border: '1.5px solid var(--primary-border)', padding: '20px', borderRadius: 'var(--radius-md)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+                          <div>
+                            <strong style={{ display: 'block', color: 'var(--primary-hover)', fontSize: '0.95rem' }}>
+                              🎉 Wage agreed with {agreedWorker.name} at {money(j.agreed_wage)}/day!
+                            </strong>
+                            <span style={{ fontSize: '0.82rem', color: 'var(--muted)' }}>Pay the community registration fee to unlock in-app worker chat and phone logs.</span>
                           </div>
-                          <div style={{ display: 'flex', gap: '8px' }}>
-                            <button className="btn btn-ghost btn-sm" onClick={() => setChattingWorker(agreedWorker)} style={{ padding: '6px 14px', fontSize: '0.8rem' }}>
-                              💬 Chat Mock
-                            </button>
-                            <button className="btn btn-primary btn-sm" onClick={() => handleComplete(j.id)} style={{ padding: '6px 14px', fontSize: '0.8rem' }}>
-                              ✓ Completed
-                            </button>
-                          </div>
+                          <button className="btn btn-primary" onClick={() => setPayingJob(j)} style={{ borderRadius: '4px' }}>
+                            💳 Pay and Confirm (₹99)
+                          </button>
                         </div>
                       )}
                     </div>
                   );
                 }) : (
-                  <div style={{ padding: '64px 32px', textAlign: 'center', background: '#ffffff' }}>
-                    <div style={{ fontSize: '3rem', marginBottom: '16px' }}>📭</div>
-                    <h4 style={{ margin: '0 0 8px', fontSize: '1.1rem' }}>No job requests found</h4>
-                    <p className="muted" style={{ margin: '0 0 20px' }}>You haven't posted any requirements yet.</p>
-                    <Link to="/post-job" className="btn btn-primary">Post your first job</Link>
-                  </div>
+                  <p className="muted" style={{ padding: '32px 0', textAlign: 'center' }}>You have not posted any daily wage job requirements yet.</p>
                 )}
               </div>
             )}
 
-            {/* ─── Bookings Tab ─── */}
+            {/* ─── Assigned Bookings Tab ─── */}
             {tab === 'bookings' && (
               <div className="fade-in">
-                <h3 style={{ borderBottom: '1px solid var(--border)', paddingBottom: '14px', marginBottom: '24px' }}>Assigned Daily Workers Registry</h3>
+                <h3 style={{ borderBottom: '1px solid var(--border)', paddingBottom: '14px', marginBottom: '24px', color: 'var(--ink)' }}>
+                  Assigned Workers Logs &amp; Chats
+                </h3>
                 
                 {myBookings.length ? myBookings.map(b => (
-                  <div key={b.id} style={{ padding: '20px 0', borderBottom: '1px solid var(--border)' }}>
-                    <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
-                      <img src={b.worker.photo_url || '/assets/worker1.jpeg'} alt={b.worker.name} style={{ width: '56px', height: '56px', borderRadius: '12px', objectFit: 'cover', border: '1.5px solid var(--border)' }} />
-                      <div style={{ flex: 1, minWidth: 220 }}>
-                        <Link to={`/worker/${b.worker.id}`} style={{ fontWeight: 700, fontSize: '1.05rem', color: 'var(--ink)' }}>
-                          {b.worker.name}
-                        </Link>
-                        <div className="muted" style={{ fontSize: '0.82rem', marginTop: '2px', color: 'var(--muted)' }}>
-                          📍 {b.worker.area} · 📞 Contact: {b.request.is_unlocked ? b.worker.phone : '[🔒 Locked — Pay Fee]'}
-                        </div>
-                        <div className="muted" style={{ fontSize: '0.82rem', color: 'var(--muted)' }}>
-                          Work: {b.request.work_type} · Ref: {b.request.ref_code} · Wage: {money(b.request.agreed_wage)}/day
+                  <div key={b.id} style={{ padding: '24px 0', borderBottom: '1px solid var(--border)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', flexWrap: 'wrap', gap: 12 }}>
+                      <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+                        <img src={b.worker.photo_url || '/assets/worker1.jpeg'} alt="" style={{ width: '56px', height: '56px', borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--primary-light)' }} />
+                        <div>
+                          <h4 style={{ margin: '0 0 4px', fontSize: '1.15rem', color: 'var(--ink)' }}>{b.worker.name}</h4>
+                          <div style={{ fontSize: '0.85rem', color: 'var(--muted)' }}>
+                            📍 {b.worker.area} · Role: <strong>{b.request.work_type}</strong> · Wage: <strong>{money(b.request.agreed_wage || b.request.wage_offered)}/day</strong>
+                          </div>
+                          <div style={{ fontSize: '0.82rem', color: 'var(--success-text)', fontWeight: 650, marginTop: '4px' }}>
+                            📞 Phone: {b.worker.phone} (Unlocked)
+                          </div>
                         </div>
                       </div>
-                      <span className={`status-chip ${b.status}`}>{b.status}</span>
-                    </div>
 
-                    {/* Review Forms */}
-                    {b.status === 'completed' && (
-                      <div style={{ marginTop: 16, paddingLeft: '72px' }}>
-                        {reviewForm.target === b.worker.id ? (
-                          <form onSubmit={handleReview} style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'end', background: 'var(--bg)', padding: '16px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
-                            <div className="field" style={{ margin: 0, minWidth: '160px' }}>
-                              <label style={{ fontSize: '0.78rem', fontWeight: 700 }}>Choose Stars</label>
-                              <div style={{ display: 'flex', gap: '6px', marginTop: '4px' }}>
-                                {[1, 2, 3, 4, 5].map(idx => (
-                                  <button
-                                    key={idx}
-                                    type="button"
-                                    onClick={() => setReviewForm(f => ({ ...f, rating: idx }))}
-                                    style={{ background: 'none', border: 'none', cursor: 'pointer', outline: 'none' }}
-                                  >
-                                    <Star size={20} fill={idx <= reviewForm.rating ? 'var(--warning)' : 'none'} style={{ color: idx <= reviewForm.rating ? 'var(--warning)' : 'var(--border-hover)' }} />
-                                  </button>
-                                ))}
-                              </div>
-                            </div>
-                            <div className="field" style={{ margin: 0, flex: 2, minWidth: '240px' }}>
-                              <label style={{ fontSize: '0.78rem', fontWeight: 700 }}>Review Description</label>
-                              <input placeholder="Describe punctuality, work performance, and general behavior..." value={reviewForm.comment} onChange={e => setReviewForm(f => ({ ...f, comment: e.target.value }))} style={{ padding: '8px 12px', fontSize: '0.88rem' }} required />
-                            </div>
-                            <button className="btn btn-primary btn-sm" type="submit" style={{ padding: '8px 16px', fontSize: '0.8rem' }}>Submit</button>
-                            <button className="btn btn-ghost btn-sm" type="button" onClick={() => setReviewForm({ target: null, rating: 5, comment: '' })} style={{ padding: '8px 16px', fontSize: '0.8rem' }}>
-                              Cancel
-                            </button>
-                          </form>
-                        ) : (
-                          <button className="btn btn-ghost btn-sm" onClick={() => setReviewForm(f => ({ ...f, target: b.worker.id }))} style={{ padding: '6px 12px', fontSize: '0.78rem' }}>
-                            ⭐ Leave a Review
+                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <button className="btn btn-ghost btn-sm" onClick={() => setChattingWorker(b.worker)} style={{ borderRadius: '4px', border: '1.5px solid var(--border)' }}>
+                          💬 In-App Chat
+                        </button>
+                        {b.request.status !== 'completed' && (
+                          <button className="btn btn-primary btn-sm" onClick={() => handleComplete(b.request.id)} style={{ borderRadius: '4px' }}>
+                            ✓ Mark Job Completed
+                          </button>
+                        )}
+                        {b.request.status === 'completed' && (
+                          <button className="btn btn-ghost btn-sm" onClick={() => setReviewForm({ target: b.worker.id, rating: 5, comment: '' })} style={{ borderRadius: '4px', color: 'var(--secondary)', borderColor: 'var(--secondary-border)' }}>
+                            ★ Review Worker
                           </button>
                         )}
                       </div>
-                    )}
+                    </div>
                   </div>
                 )) : (
-                  <div style={{ padding: '48px 24px', textAlign: 'center', background: '#ffffff' }}>
-                    <div style={{ fontSize: '3rem', marginBottom: '12px' }}>👷</div>
-                    <h4 style={{ margin: '0 0 4px', fontSize: '1rem' }}>No confirmed workers yet</h4>
-                    <p className="muted" style={{ margin: 0 }}>Completed bookings and assigned workers will appear here.</p>
-                  </div>
+                  <p className="muted" style={{ padding: '32px 0', textAlign: 'center' }}>No assigned daily workers in your active bookings history.</p>
                 )}
               </div>
             )}
+
           </div>
         </div>
+
       </div>
 
-      {/* ─── UPI QR PAYMENT CHECKOUT MODAL ─── */}
-      {payingJob && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(9, 13, 22, 0.65)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1100, padding: 16, backdropFilter: 'blur(6px)' }}>
-          <div className="fade-in card" style={{ background: '#ffffff', borderRadius: 'var(--radius-lg)', width: '100%', maxWidth: '440px', padding: '36px 28px', boxShadow: 'var(--shadow-lg)', border: '1px solid var(--border)', position: 'relative' }}>
-            <button style={{ position: 'absolute', top: 18, right: 18, background: 'none', border: 'none', fontSize: '1.3rem', cursor: 'pointer', color: 'var(--muted-light)' }} onClick={() => setPayingJob(null)}>
-              ✕
-            </button>
-            <div style={{ textAlign: 'center', marginBottom: 24 }}>
-              <div style={{ fontSize: '2.5rem', marginBottom: 10 }}>💳</div>
-              <h3 style={{ margin: 0, fontSize: '1.3rem' }}>Secure Contact Activation</h3>
-              <p className="muted" style={{ fontSize: '0.82rem', marginTop: 4 }}>
-                UPI / NetBanking simulation (₹10 Platform Maintenance Fee)
-              </p>
-            </div>
-
-            <div style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', padding: '16px 20px', marginBottom: '24px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', fontSize: '0.85rem' }}>
-                <span className="muted">Job Code:</span>
-                <strong style={{ color: 'var(--ink)' }}>{payingJob.ref_code}</strong>
+      {/* Review Worker modal overlay */}
+      {reviewForm.target && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(11, 15, 25, 0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, backdropFilter: 'blur(8px)' }}>
+          <div className="card glass-card" style={{ padding: '36px', background: '#ffffff', borderRadius: 'var(--radius-lg)', maxWidth: '500px', width: '90%', border: '1px solid var(--border)' }}>
+            <h3 style={{ margin: '0 0 6px', color: 'var(--ink)' }}>Write a Verified Review</h3>
+            <p className="muted" style={{ fontSize: '0.85rem', marginBottom: '24px' }}>Submit your feedback to update the Noida community rating scoreboard.</p>
+            <form onSubmit={handleReview}>
+              <div className="field">
+                <label>Punctuality &amp; Skills Rating</label>
+                <select value={reviewForm.rating} onChange={e => setReviewForm({ ...reviewForm, rating: e.target.value })}>
+                  <option value="5">5 Stars (Excellent)</option>
+                  <option value="4">4 Stars (Good)</option>
+                  <option value="3">3 Stars (Average)</option>
+                  <option value="2">2 Stars (Poor)</option>
+                  <option value="1">1 Star (Very Bad)</option>
+                </select>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', fontSize: '0.85rem' }}>
-                <span className="muted">Booked Worker:</span>
-                <strong style={{ color: 'var(--ink)' }}>{data.workers.find(w => w.id === payingJob.agreed_worker_id)?.name}</strong>
+              <div className="field">
+                <label>Review Description</label>
+                <textarea value={reviewForm.comment} onChange={e => setReviewForm({ ...reviewForm, comment: e.target.value })} placeholder="Write your experience..." required style={{ minHeight: '90px' }} />
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', fontSize: '0.85rem' }}>
-                <span className="muted">Daily Wage:</span>
-                <strong style={{ color: 'var(--ink)' }}>{money(payingJob.agreed_wage)}</strong>
+              <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '20px' }}>
+                <button type="button" className="btn btn-ghost btn-sm" onClick={() => setReviewForm({ target: null, rating: 5, comment: '' })} style={{ borderRadius: '4px' }}>Cancel</button>
+                <button type="submit" className="btn btn-primary btn-sm" style={{ borderRadius: '4px' }}>Submit Review</button>
               </div>
-              <hr style={{ border: 'none', borderTop: '1px solid var(--border)', margin: '14px 0' }} />
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.05rem' }}>
-                <span style={{ fontWeight: 700, color: 'var(--ink)' }}>Amount Due:</span>
-                <strong style={{ color: 'var(--secondary)' }}>₹10.00</strong>
-              </div>
-            </div>
-
-            {/* Simulated QR Code */}
-            <div style={{ textAlign: 'center', marginBottom: '24px', background: 'var(--bg)', border: '1px solid var(--border)', padding: '20px', borderRadius: 'var(--radius-md)' }}>
-              <img src="/assets/logo.jpeg" alt="Simulated QR Code" style={{ width: '130px', height: '130px', margin: '0 auto 10px', objectFit: 'contain', borderRadius: '8px', border: '1px solid var(--border)' }} />
-              <div style={{ fontSize: '0.78rem', color: 'var(--muted)', fontWeight: 700 }}>UPI ID: labourlink@upi</div>
-            </div>
-
-            <form onSubmit={handlePayment}>
-              <button className="btn btn-primary btn-block" type="submit" style={{ padding: '14px' }}>
-                ✓ Simulate Successful Payment (₹10)
-              </button>
             </form>
           </div>
         </div>
       )}
 
-      {/* ─── INTERACTIVE MOCK MESSAGING PANEL ─── */}
+      {/* ─── checkout QR code overlay ─── */}
+      {payingJob && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(11, 15, 25, 0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, backdropFilter: 'blur(10px)' }}>
+          <div className="card glass-card" style={{ padding: '36px', background: '#ffffff', borderRadius: 'var(--radius-lg)', maxWidth: '440px', width: '90%', textAlign: 'center', border: '1px solid var(--border)' }}>
+            <h3 style={{ color: 'var(--ink)', marginBottom: '8px' }}>Scan &amp; Confirm Dispatch</h3>
+            <p className="muted" style={{ fontSize: '0.85rem', marginBottom: '24px' }}>One-time registration fee to unlock worker's phone logs.</p>
+            
+            <div style={{ background: '#f8fafc', padding: '20px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', display: 'inline-block', marginBottom: '24px' }}>
+              <img src="/assets/qr-code.jpeg" alt="Pay UPI QR Code" style={{ width: '170px', height: '170px', display: 'block', margin: '0 auto', borderRadius: '8px', border: '1px solid var(--border)' }} />
+              <div style={{ fontSize: '0.78rem', color: 'var(--muted)', marginTop: '12px' }}>
+                UPI ID: <strong>99999XXXXX@paytm</strong>
+              </div>
+            </div>
+
+            <form onSubmit={handlePayment}>
+              <div className="field" style={{ textAlign: 'left' }}>
+                <label>Transfer Transaction Reference ID / UPI Ref Number</label>
+                <input placeholder="Enter 12-digit transaction ID..." required style={{ padding: '10px 14px' }} />
+              </div>
+
+              <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginTop: '24px' }}>
+                <button type="button" className="btn btn-ghost btn-sm" onClick={() => setPayingJob(null)} style={{ borderRadius: '4px' }}>Cancel Payment</button>
+                <button type="submit" className="btn btn-primary btn-sm" style={{ borderRadius: '4px' }}>✓ Verify Transfer</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ─── in-app chat drawer overlay ─── */}
       {chattingWorker && (
-        <div style={{ position: 'fixed', bottom: '24px', right: '24px', width: '340px', height: '420px', background: '#ffffff', border: '1.5px solid var(--border)', borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-lg)', display: 'flex', flexDirection: 'column', zIndex: 1100, overflow: 'hidden' }}>
-          {/* Chat Header */}
-          <div style={{ background: 'var(--ink)', color: '#ffffff', padding: '14px 18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <img src={chattingWorker.photo_url || '/assets/worker1.jpeg'} alt="" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover', border: '1.5px solid #ffffff' }} />
-              <div>
-                <div style={{ fontWeight: 700, fontSize: '0.92rem' }}>{chattingWorker.name}</div>
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(11, 15, 25, 0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, backdropFilter: 'blur(8px)' }}>
+          <div className="card glass-card" style={{ width: '480px', height: '580px', background: '#ffffff', borderRadius: 'var(--radius-lg)', display: 'flex', flexDirection: 'column', overflow: 'hidden', border: '1px solid var(--border)' }}>
+            <div style={{ background: 'var(--ink)', padding: '20px', color: '#ffffff', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <img src={chattingWorker.photo_url || '/assets/worker1.jpeg'} alt="" style={{ width: '38px', height: '38px', borderRadius: '50%', objectFit: 'cover' }} />
+                <div>
+                  <strong style={{ display: 'block', fontSize: '0.95rem' }}>{chattingWorker.name}</strong>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--success)' }}>● Active Translation (Hindi &lt;&gt; English)</span>
+                </div>
+              </div>
+              <button onClick={() => setChattingWorker(null)} style={{ background: 'none', border: 'none', color: '#ffffff', fontSize: '1.4rem', cursor: 'pointer' }}>×</button>
+            </div>
+
+            <div style={{ flex: 1, padding: '20px', overflowY: 'auto', background: '#f8fafc', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              {getChatList(chattingWorker.id).map(msg => (
+                <div key={msg.id} style={{ alignSelf: msg.sender === 'hirer' ? 'flex-end' : 'flex-start', maxWidth: '80%' }}>
+                  <div style={{
+                    background: msg.sender === 'hirer' ? 'var(--primary)' : '#ffffff',
+                    color: msg.sender === 'hirer' ? '#ffffff' : 'var(--ink)',
+                    padding: '12px 16px',
+                    borderRadius: '12px',
+                    borderTopLeftRadius: msg.sender === 'worker' ? '2px' : '12px',
+                    borderTopRightRadius: msg.sender === 'hirer' ? '2px' : '12px',
+                    fontSize: '0.88rem',
+                    lineHeight: '1.45',
+                    border: msg.sender === 'worker' ? '1px solid var(--border)' : 'none',
+                    boxShadow: 'var(--shadow-sm)'
+                  }}>
+                    {isTranslated && msg.sender === 'worker' ? "धन्यवाद। कृपया लैंडमार्क लोकेशन कोआर्डिनेट्स साझा करें।" : msg.text}
+                  </div>
+                  <span style={{ fontSize: '0.7rem', color: 'var(--muted-light)', display: 'block', textAlign: msg.sender === 'hirer' ? 'right' : 'left', marginTop: '4px', fontWeight: 600 }}>
+                    {msg.time}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ background: '#ffffff', padding: '16px', borderTop: '1px solid var(--border)' }}>
+              <form onSubmit={sendMessage} style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+                <input
+                  type="text"
+                  placeholder="Type message in English..."
+                  value={typedMessage}
+                  onChange={e => setTypedMessage(e.target.value)}
+                  style={{ flex: 1, padding: '10px 14px', border: '1.5px solid var(--border)', borderRadius: '4px', outline: 'none' }}
+                />
+                <button type="submit" className="btn btn-primary" style={{ padding: '10px 20px', borderRadius: '4px' }}>Send</button>
+              </form>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <button
                   type="button"
                   onClick={() => setIsTranslated(!isTranslated)}
-                  style={{ background: 'var(--primary-light)', border: 'none', color: 'var(--primary)', fontSize: '0.65rem', fontWeight: 700, padding: '2px 6px', borderRadius: '4px', cursor: 'pointer', marginTop: '3px' }}
+                  style={{ background: 'none', border: 'none', color: 'var(--primary)', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer' }}
                 >
-                  {isTranslated ? '🇺🇸 Translate to EN' : '🇮🇳 Translate to HI'}
+                  {isTranslated ? "✓ Showing Original English" : "🗣️ Translate Worker's Hindi"}
                 </button>
+                <span style={{ fontSize: '0.72rem', color: 'var(--muted-light)' }}>SMS fallback active</span>
               </div>
             </div>
-            <button style={{ background: 'none', border: 'none', color: '#ffffff', fontSize: '1.2rem', cursor: 'pointer' }} onClick={() => setChattingWorker(null)}>
-              ✕
-            </button>
           </div>
-          {/* Chat Body */}
-          <div style={{ flex: 1, padding: '16px', overflowY: 'auto', background: 'var(--bg)', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {getChatList(chattingWorker.id).map(m => {
-              // Mock translation dictionary
-              const dict = {
-                "Namaste! I am ready to join tomorrow as agreed.": "नमस्ते! मैं सहमति के अनुसार कल काम पर आने के लिए तैयार हूँ।",
-                "Dhanyawad. Please share landmark location coordinates.": "धन्यवाद। कृपया मुख्य लैंडमार्क स्थान के निर्देश साझा करें।"
-              };
-              const displayText = (isTranslated && m.sender === 'worker') ? (dict[m.text] || dict[m.text] || `[HI]: ${m.text}`) : m.text;
-
-              return (
-                <div key={m.id} style={{ alignSelf: m.sender === 'hirer' ? 'flex-end' : 'flex-start', background: m.sender === 'hirer' ? 'var(--primary)' : '#ffffff', color: m.sender === 'hirer' ? '#ffffff' : 'var(--ink)', padding: '10px 14px', borderRadius: '12px', maxWidth: '80%', boxShadow: 'var(--shadow-sm)', fontSize: '0.85rem', border: m.sender === 'worker' ? '1px solid var(--border)' : 'none' }}>
-                  <div>{displayText}</div>
-                  <div style={{ fontSize: '0.65rem', textAlign: 'right', marginTop: '5px', opacity: 0.8 }}>{m.time}</div>
-                </div>
-              );
-            })}
-          </div>
-          {/* Chat Form */}
-          <form onSubmit={sendMessage} style={{ borderTop: '1px solid var(--border)', display: 'flex', padding: '8px', background: '#ffffff' }}>
-            <input
-              type="text"
-              placeholder="Type message..."
-              value={typedMessage}
-              onChange={e => setTypedMessage(e.target.value)}
-              style={{ flex: 1, border: 'none', padding: '10px', fontSize: '0.88rem', outline: 'none' }}
-            />
-            <button className="btn btn-primary btn-sm" type="submit" style={{ padding: '8px 16px', borderRadius: '6px' }}>
-              Send
-            </button>
-          </form>
         </div>
       )}
     </section>

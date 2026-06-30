@@ -152,13 +152,13 @@ export default function LabourDashboard({ auth, data, onUpdateWorker, onUpdateRe
           {/* Sidebar Nav */}
           <aside className="dash-sidebar">
             <button className={`dash-sidebar-btn ${tab === 'profile' ? 'active' : ''}`} onClick={() => setTab('profile')}>
-              👤 My Profile Card
+              👤 My Profile Dashboard
             </button>
             <button className={`dash-sidebar-btn ${tab === 'jobs' ? 'active' : ''}`} onClick={() => setTab('jobs')}>
               <Briefcase size={16} /> Open Jobs ({matchingJobs.length})
             </button>
             <button className={`dash-sidebar-btn ${tab === 'bookings' ? 'active' : ''}`} onClick={() => setTab('bookings')}>
-              <Check size={16} /> My Bookings ({myBookings.length})
+              <Check size={16} /> Bookings Log ({myBookings.length})
             </button>
             <button className={`dash-sidebar-btn ${tab === 'reviews' ? 'active' : ''}`} onClick={() => setTab('reviews')}>
               <Award size={16} /> Client Reviews ({myReviews.length})
@@ -166,7 +166,7 @@ export default function LabourDashboard({ auth, data, onUpdateWorker, onUpdateRe
           </aside>
 
           {/* Main Dashboard Panel */}
-          <div className="card" style={{ background: '#ffffff', border: '1px solid var(--border)', padding: '32px' }}>
+          <div className="card glass-card" style={{ background: '#ffffff', border: '1px solid var(--border)', padding: '32px', borderRadius: 'var(--radius-lg)' }}>
             
             {/* ─── Profile Workspace Tab ─── */}
             {tab === 'profile' && (
@@ -174,7 +174,7 @@ export default function LabourDashboard({ auth, data, onUpdateWorker, onUpdateRe
                 <div style={{ display: 'flex', gap: '20px', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '24px', marginBottom: '24px', flexWrap: 'wrap' }}>
                   <img src={worker.photo_url || '/assets/worker1.jpeg'} alt={worker.name} style={{ width: '80px', height: '80px', borderRadius: '50%', objectFit: 'cover', border: '3px solid var(--primary-light)', boxShadow: 'var(--shadow-sm)' }} />
                   <div>
-                    <h3 style={{ margin: 0, fontSize: '1.25rem' }}>{worker.name}</h3>
+                    <h3 style={{ margin: 0, fontSize: '1.25rem', color: 'var(--ink)' }}>{worker.name}</h3>
                     <div className="area" style={{ color: 'var(--muted)', fontSize: '0.88rem', margin: '4px 0 8px' }}>
                       📍 {worker.area}{worker.locality ? `, ${worker.locality}` : ''}
                     </div>
@@ -184,24 +184,24 @@ export default function LabourDashboard({ auth, data, onUpdateWorker, onUpdateRe
                   </div>
                 </div>
 
-                <div className="kpi-grid">
-                  <div className="kpi">
-                    <b>{worker.reliability_score}%</b>
-                    <span>Reliability Score</span>
+                <div className="bento-grid" style={{ marginBottom: '32px' }}>
+                  <div className="bento-col-4 glass-card" style={{ padding: '20px', background: 'var(--bg)', borderRadius: 'var(--radius-md)' }}>
+                    <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--primary)' }}>{worker.reliability_score}%</div>
+                    <div style={{ fontSize: '0.78rem', color: 'var(--muted)', fontWeight: 700 }}>Reliability Score</div>
                   </div>
-                  <div className="kpi">
-                    <b>{worker.total_jobs}</b>
-                    <span>Jobs Completed</span>
+                  <div className="bento-col-4 glass-card" style={{ padding: '20px', background: 'var(--bg)', borderRadius: 'var(--radius-md)' }}>
+                    <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--ink)' }}>{worker.total_jobs}</div>
+                    <div style={{ fontSize: '0.78rem', color: 'var(--muted)', fontWeight: 700 }}>Jobs Completed</div>
                   </div>
-                  <div className="kpi">
-                    <b>★ {Number(worker.rating_avg).toFixed(1)}</b>
-                    <span>Average Rating</span>
+                  <div className="bento-col-4 glass-card" style={{ padding: '20px', background: 'var(--bg)', borderRadius: 'var(--radius-md)' }}>
+                    <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--secondary)' }}>★ {Number(worker.rating_avg).toFixed(1)}</div>
+                    <div style={{ fontSize: '0.78rem', color: 'var(--muted)', fontWeight: 700 }}>Average Rating</div>
                   </div>
                 </div>
 
                 {/* Availability card switcher */}
-                <div className="card" style={{ padding: '24px', background: 'var(--bg)', border: '1px solid var(--border)', marginBottom: '32px' }}>
-                  <h4 style={{ margin: '0 0 10px', fontSize: '0.98rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div className="card glass-card" style={{ padding: '24px', background: 'var(--bg)', border: '1px solid var(--border)', marginBottom: '32px', borderRadius: 'var(--radius-md)' }}>
+                  <h4 style={{ margin: '0 0 10px', fontSize: '0.98rem', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--ink)' }}>
                     <span className="live-pulse" style={{ width: '8px', height: '8px', borderRadius: '50%', background: worker.availability_status === 'available' ? 'var(--success)' : worker.availability_status === 'working' ? 'var(--warning)' : 'var(--error)' }}></span>
                     Change Payout Availability
                   </h4>
@@ -219,7 +219,7 @@ export default function LabourDashboard({ auth, data, onUpdateWorker, onUpdateRe
                         onClick={() => handleAvailability(btn.s)}
                         style={{
                           padding: '10px 20px',
-                          borderRadius: 'var(--radius-sm)',
+                          borderRadius: '4px',
                           fontSize: '0.88rem',
                           fontWeight: 700,
                           cursor: 'pointer',
@@ -256,122 +256,66 @@ export default function LabourDashboard({ auth, data, onUpdateWorker, onUpdateRe
               </div>
             )}
 
-            {/* ─── Open Jobs Tab ─── */}
+            {/* ─── Jobs Tab ─── */}
             {tab === 'jobs' && (
               <div className="fade-in">
-                <h3 style={{ borderBottom: '1px solid var(--border)', paddingBottom: '14px', marginBottom: '24px', fontSize: '1.2rem' }}>
-                  Available Chowk Requests Matching Your Skills
+                <h3 style={{ borderBottom: '1px solid var(--border)', paddingBottom: '14px', marginBottom: '24px', color: 'var(--ink)' }}>
+                  Matching Job Leads in Noida
                 </h3>
                 
                 {matchingJobs.length ? matchingJobs.map(j => {
-                  const myOffer = j.offers?.find(o => o.worker_id === worker.id);
+                  const myOffer = (j.offers || []).find(o => o.worker_id === worker.id);
+                  const isAgreed = j.agreed_worker_id === worker.id;
+                  
                   return (
                     <div key={j.id} style={{ padding: '24px 0', borderBottom: '1px solid var(--border)' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', flexWrap: 'wrap', gap: 12 }}>
                         <div>
-                          <h4 style={{ margin: '0 0 6px', fontSize: '1.15rem', color: 'var(--ink)' }}>
-                            {j.work_type} Required
+                          <h4 style={{ margin: '0 0 8px', fontSize: '1.15rem', color: 'var(--ink)' }}>
+                            {j.work_type} Required (Ref: {j.ref_code})
                           </h4>
-                          <div style={{ fontSize: '0.9rem', color: 'var(--muted)' }}>
-                            📍 <strong>{j.area}</strong> · {j.location} · 📅 Job Date: {fmtDate(j.job_date)} · Proposed: <strong>{money(j.wage_offered)}/day</strong>
+                          <p className="muted" style={{ margin: '0 0 10px', fontSize: '0.85rem' }}>
+                            📍 <strong>{j.area}</strong> · {j.location} · 📅 Work Date: {fmtDate(j.job_date)}
+                          </p>
+                          <div style={{ background: 'var(--bg)', padding: '12px 18px', borderRadius: '4px', display: 'inline-flex', gap: 14, fontSize: '0.82rem', fontWeight: 700 }}>
+                            <span>Offered Daily Wage: <strong style={{ color: 'var(--primary)' }}>{money(j.wage_offered)}</strong></span>
+                            {myOffer && (
+                              <span>Your Counter: <strong style={{ color: 'var(--secondary)' }}>{money(myOffer.wage)}</strong> ({myOffer.status})</span>
+                            )}
                           </div>
-                          {j.notes && <div style={{ padding: '10px 14px', fontSize: '0.82rem', margin: '10px 0 0', fontStyle: 'italic', background: 'var(--bg)', color: 'var(--muted)', border: '1.5px solid var(--border)', borderRadius: 'var(--radius-sm)' }}>Notes: {j.notes}</div>}
                         </div>
-                        <div>
+
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-end' }}>
                           <span className={`status-chip ${j.status}`}>{j.status}</span>
+                          {isAgreed && <span className="status-chip confirmed" style={{ background: 'var(--success-light)', color: 'var(--success-text)' }}>✓ Booked</span>}
                         </div>
                       </div>
 
-                      {/* Wage Negotiations */}
-                      <div style={{ marginTop: '20px', background: 'var(--bg)', padding: '16px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
-                        {!myOffer ? (
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
-                            <span style={{ fontSize: '0.9rem', fontWeight: 550, color: 'var(--ink)' }}>Interested in this work? Accept the wage or offer your price:</span>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                              <button className="btn btn-primary btn-sm" onClick={() => acceptWage(j.id, j.wage_offered)}>
-                                Accept {money(j.wage_offered)}
-                              </button>
-                              <div style={{ display: 'flex', gap: '6px' }}>
-                                <input
-                                  type="number"
-                                  placeholder="Counter ₹"
-                                  value={counterWages[j.id] || ''}
-                                  onChange={e => setCounterWages(prev => ({ ...prev, [j.id]: e.target.value }))}
-                                  style={{ width: '100px', padding: '8px 10px', fontSize: '0.85rem', borderRadius: '6px', border: '1px solid var(--border)', outline: 'none' }}
-                                />
-                                <button className="btn btn-ghost btn-sm" onClick={() => submitCounterOffer(j.id, j.wage_offered)}>
-                                  Counter
-                                </button>
-                              </div>
-                            </div>
+                      {/* Negotiate Action options */}
+                      {!isAgreed && (
+                        <div style={{ display: 'flex', gap: '16px', marginTop: '18px', alignItems: 'center', flexWrap: 'wrap' }}>
+                          <button className="btn btn-primary btn-sm" onClick={() => acceptWage(j.id, j.wage_offered)} style={{ borderRadius: '4px' }}>
+                            Accept Offered Wage
+                          </button>
+                          <span style={{ color: 'var(--muted-light)', fontSize: '0.88rem' }}>or counter:</span>
+                          <div style={{ display: 'flex', gap: '8px' }}>
+                            <input
+                              type="number"
+                              placeholder="₹ Wage/Day"
+                              value={counterWages[j.id] || ''}
+                              onChange={e => setCounterWages({ ...counterWages, [j.id]: e.target.value })}
+                              style={{ width: '110px', padding: '6px 12px', border: '1.5px solid var(--border)', borderRadius: '4px', outline: 'none' }}
+                            />
+                            <button className="btn btn-ghost btn-sm" onClick={() => submitCounterOffer(j.id, j.wage_offered)} style={{ borderRadius: '4px' }}>
+                              Submit Counter
+                            </button>
                           </div>
-                        ) : (
-                          <div>
-                            {myOffer.status === 'agreed' ? (
-                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
-                                <div>
-                                  <span style={{ color: 'var(--primary)', fontWeight: 700, display: 'block', fontSize: '0.95rem' }}>✓ Wage Agreed at {money(j.agreed_wage)}/day!</span>
-                                  <div style={{ fontSize: '0.88rem', marginTop: '6px', color: 'var(--muted)' }}>
-                                    {j.is_unlocked ? (
-                                      <span>🔓 Client Unlocked Details. Hirer Name: <strong>{j.hirer_name}</strong> · Phone: <strong>📞 {j.hirer_phone}</strong></span>
-                                    ) : (
-                                      <span>Waiting for client portal unlock payment (₹10 service fee).</span>
-                                    )}
-                                  </div>
-                                </div>
-                                {j.is_unlocked && (
-                                  <div style={{ background: 'var(--success-light)', color: 'var(--success-text)', padding: '6px 14px', borderRadius: '99px', fontSize: '0.82rem', fontWeight: 700, border: '1px solid var(--success-border)' }}>
-                                    Unlocked &amp; Ready
-                                  </div>
-                                )}
-                              </div>
-                            ) : myOffer.status === 'pending' ? (
-                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
-                                <div>
-                                  <span style={{ fontWeight: 700, color: 'var(--ink)' }}>Negotiating...</span>
-                                  <div style={{ fontSize: '0.88rem', marginTop: '4px', color: 'var(--muted)' }}>
-                                    {myOffer.history[myOffer.history.length - 1].sender === 'hirer' ? (
-                                      <span>Client countered with <strong style={{ color: 'var(--secondary)' }}>{money(myOffer.wage)}</strong>.</span>
-                                    ) : (
-                                      <span>You proposed <strong style={{ color: 'var(--secondary)' }}>{money(myOffer.wage)}</strong>. Waiting for client response...</span>
-                                    )}
-                                  </div>
-                                </div>
-                                {myOffer.history[myOffer.history.length - 1].sender === 'hirer' && (
-                                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                    <button className="btn btn-primary btn-sm" onClick={() => acceptWage(j.id, myOffer.wage)}>
-                                      Accept {money(myOffer.wage)}
-                                    </button>
-                                    <div style={{ display: 'flex', gap: '6px' }}>
-                                      <input
-                                        type="number"
-                                        placeholder="Counter ₹"
-                                        value={counterWages[j.id] || ''}
-                                        onChange={e => setCounterWages(prev => ({ ...prev, [j.id]: e.target.value }))}
-                                        style={{ width: '90px', padding: '8px 10px', fontSize: '0.82rem', borderRadius: '6px', border: '1px solid var(--border)', outline: 'none' }}
-                                      />
-                                      <button className="btn btn-ghost btn-sm" onClick={() => submitCounterOffer(j.id, myOffer.wage)}>
-                                        Counter
-                                      </button>
-                                    </div>
-                                  </div>
-                                )}
-                              </div>
-                            ) : (
-                              <span className="muted" style={{ fontSize: '0.88rem', fontStyle: 'italic' }}>
-                                Another worker was selected for this assignment.
-                              </span>
-                            )}
-                          </div>
-                        )}
-                      </div>
+                        </div>
+                      )}
                     </div>
                   );
                 }) : (
-                  <div style={{ padding: '48px 24px', textAlign: 'center', background: '#ffffff' }}>
-                    <div style={{ fontSize: '3rem', marginBottom: '12px' }}>📭</div>
-                    <p className="muted" style={{ margin: 0 }}>No open jobs matching your skills and area right now. Check back later!</p>
-                  </div>
+                  <p className="muted" style={{ padding: '24px 0', textAlign: 'center' }}>No active daily wage leads matching your skills in Noida Sector at present.</p>
                 )}
               </div>
             )}
@@ -379,24 +323,29 @@ export default function LabourDashboard({ auth, data, onUpdateWorker, onUpdateRe
             {/* ─── Bookings Tab ─── */}
             {tab === 'bookings' && (
               <div className="fade-in">
-                <h3 style={{ borderBottom: '1px solid var(--border)', paddingBottom: '12px', marginBottom: '20px', fontSize: '1.2rem' }}>My Confirmed Assignments</h3>
+                <h3 style={{ borderBottom: '1px solid var(--border)', paddingBottom: '14px', marginBottom: '24px', color: 'var(--ink)' }}>
+                  Assigned Booking History
+                </h3>
+                
                 {myBookings.length ? myBookings.map(b => (
-                  <div key={b.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px 0', borderBottom: '1px solid var(--border)', flexWrap: 'wrap', gap: '12px' }}>
-                    <div>
-                      <h4 style={{ margin: '0 0 6px', fontSize: '1.1rem', color: 'var(--ink)' }}>
-                        {b.request.work_type} — Ref: {b.request.ref_code}
-                      </h4>
-                      <div className="muted" style={{ fontSize: '0.85rem' }}>
-                        📍 {b.request.area} · 📅 Date: {fmtDate(b.request.job_date)} · Client Name: {b.request.hirer_name} · 📞 Contact: {b.request.is_unlocked ? b.request.hirer_phone : '[🔒 Payment Pending]'}
+                  <div key={b.id} style={{ padding: '20px 0', borderBottom: '1px solid var(--border)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+                      <div>
+                        <h4 style={{ margin: '0 0 6px', fontSize: '1.15rem', color: 'var(--ink)' }}>
+                          {b.request.work_type} Dispatch (Ref: {b.request.ref_code})
+                        </h4>
+                        <div style={{ fontSize: '0.85rem', color: 'var(--muted)' }}>
+                          👤 Client Name: <strong>{b.request.hirer_name}</strong> · 📍 Area: {b.request.area} · 📞 Contact: {b.request.is_unlocked ? b.request.hirer_phone : '🔒 Pay Fee to Unlock'}
+                        </div>
+                        <div style={{ fontSize: '0.82rem', color: 'var(--muted-light)', marginTop: '4px', fontWeight: 650 }}>
+                          📅 Confirmed Dispatch Date: {fmtDate(b.confirmed_at)}
+                        </div>
                       </div>
+                      <span className={`status-chip ${b.status}`}>{b.status}</span>
                     </div>
-                    <span className={`status-chip ${b.status}`}>{b.status}</span>
                   </div>
                 )) : (
-                  <div style={{ padding: '48px 24px', textAlign: 'center', background: '#ffffff' }}>
-                    <div style={{ fontSize: '3rem', marginBottom: '12px' }}>📋</div>
-                    <p className="muted" style={{ margin: 0 }}>No bookings assigned yet. Confirmed jobs will appear here.</p>
-                  </div>
+                  <p className="muted" style={{ padding: '24px 0', textAlign: 'center' }}>No confirmed job bookings assigned to your profile yet.</p>
                 )}
               </div>
             )}
@@ -404,26 +353,28 @@ export default function LabourDashboard({ auth, data, onUpdateWorker, onUpdateRe
             {/* ─── Reviews Tab ─── */}
             {tab === 'reviews' && (
               <div className="fade-in">
-                <h3 style={{ borderBottom: '1px solid var(--border)', paddingBottom: '12px', marginBottom: '20px', fontSize: '1.2rem' }}>Verified Client Reviews</h3>
+                <h3 style={{ borderBottom: '1px solid var(--border)', paddingBottom: '14px', marginBottom: '24px', color: 'var(--ink)' }}>
+                  Verified Client Reviews
+                </h3>
+                
                 {myReviews.length ? myReviews.map(r => (
-                  <div className="card" key={r.id} style={{ padding: '24px', marginBottom: '16px', border: '1px solid var(--border)', background: '#ffffff' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', alignItems: 'center' }}>
-                      <strong style={{ color: 'var(--ink)', fontSize: '0.98rem' }}>{r.hirer_name}</strong>
-                      <span className="stars">{stars(r.rating)}</span>
+                  <div className="card glass-card" key={r.id} style={{ padding: '20px', background: 'var(--bg)', borderRadius: 'var(--radius-md)', marginBottom: '16px', border: '1px solid var(--border)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+                      <strong style={{ color: 'var(--ink)' }}>{r.hirer_name}</strong>
+                      <span style={{ fontSize: '0.82rem', color: 'var(--muted-light)', fontWeight: 650 }}>{fmtDate(r.created_at)}</span>
                     </div>
-                    <p style={{ margin: 0, fontSize: '0.92rem', color: 'var(--muted)', lineHeight: '1.6', fontStyle: 'italic' }}>"{r.comment}"</p>
-                    <div className="muted" style={{ fontSize: '0.78rem', marginTop: '12px', fontWeight: 550 }}>Job Completed on {fmtDate(r.created_at)}</div>
+                    <div>{stars(r.rating)}</div>
+                    <p style={{ margin: '8px 0 0', fontStyle: 'italic', fontSize: '0.88rem', color: 'var(--muted)', lineHeight: '1.5' }}>"{r.comment}"</p>
                   </div>
                 )) : (
-                  <div style={{ padding: '48px 24px', textAlign: 'center', background: '#ffffff' }}>
-                    <div style={{ fontSize: '3rem', marginBottom: '12px' }}>⭐</div>
-                    <p className="muted" style={{ margin: 0 }}>No reviews yet. After completing jobs, clients will leave ratings here.</p>
-                  </div>
+                  <p className="muted" style={{ padding: '24px 0', textAlign: 'center' }}>No client review records published for your profile yet.</p>
                 )}
               </div>
             )}
+
           </div>
         </div>
+
       </div>
     </section>
   );

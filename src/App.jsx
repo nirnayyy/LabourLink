@@ -22,17 +22,62 @@ function App() {
   const [auth, setAuth] = useState(() => loadState(AUTH_KEY, { role: null, user: null }));
   const navigate = useNavigate();
 
-  useEffect(() => { saveState(AUTH_KEY, auth); }, [auth]);
+  // Load profile when session is established
+  const loadProfile = useCallback(async (uid) => {
+    try {
+      const { data: profile } = await supabase.from('profiles').select('*').eq('id', uid).single();
+      if (profile) {
+        const authData = { role: profile.role, user: profile };
+        setAuth(authData);
+        saveState(AUTH_KEY, authData);
+        return authData;
+      }
+    } catch (err) {
+      console.error('Failed to load profile for user:', uid, err);
+    }
+    return null;
+  }, []);
 
-  const handleLogin = useCallback(({ role, user }) => {
+  useEffect(() => {
+    // Check active session on mount
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        loadProfile(session.user.id);
+      }
+    });
+
+    // Listen for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (session) {
+        await loadProfile(session.user.id);
+      } else {
+        const emptyAuth = { role: null, user: null };
+        setAuth(emptyAuth);
+        saveState(AUTH_KEY, emptyAuth);
+      }
+    });
+
+    return () => {
+      if (subscription) subscription.unsubscribe();
+    };
+  }, [loadProfile]);
+
+  const handleLogin = useCallback(async ({ role, user }) => {
     setAuth({ role, user });
     if (role === 'admin') navigate('/admin');
     else if (role === 'labour') navigate('/labour');
     else navigate('/hirer');
   }, [navigate]);
 
-  const handleLogout = useCallback(() => {
-    setAuth({ role: null, user: null });
+  const handleLogout = useCallback(async () => {
+    try {
+      await supabase.auth.signOut();
+    } catch (err) {
+      console.warn('Supabase signout warning:', err);
+    }
+    const emptyAuth = { role: null, user: null };
+    setAuth(emptyAuth);
+    saveState(AUTH_KEY, emptyAuth);
     navigate('/');
   }, [navigate]);
 
