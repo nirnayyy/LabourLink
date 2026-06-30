@@ -28,7 +28,7 @@ export default function Home({ data }) {
     "⚡ Sunita Devi confirmed for Cleaning Help at Gaur City, Greater Noida West",
     "⚡ Vikram Singh assigned to Shifting / Moving job in Sector 62",
     "⚡ Mohan Lal booked for Painting assignment at Knowledge Park — ₹850 agreed",
-    "⚡ New general worker request received for Bennett University community project"
+    "⚡ New general worker request received for LabourLink startup project"
   ];
 
   useEffect(() => {
@@ -139,14 +139,14 @@ export default function Home({ data }) {
         </div>
       </section>
 
-      {/* ─── BENNETT SOCIAL PROJECT FEATURES ─── */}
+      {/* ─── LABOURLINK STARTUP FEATURES ─── */}
       <section className="section" style={{ background: 'var(--bg)', borderBottom: '1px solid var(--border)' }}>
         <div className="container">
           <div className="bento-grid">
             {[
               { icon: <Shield size={24} />, t: 'Safe Direct Payouts', d: 'No online wallets or deposits. Pay workers directly via cash or personal UPI once the daily job is finished.' },
               { icon: <Check size={24} />, t: 'In-Person Registry', d: 'Every worker has been visited, interviewed, and photo-verified at local labor chowks by our coordination team.' },
-              { icon: <Info size={24} />, t: 'Bennett Welfare Project', d: 'Built and managed by Bennett University students as a community welfare social service. Non-profit and student-run.' }
+              { icon: <Info size={24} />, t: 'LabourLink Venture', d: 'An independent digital portal designed to digitise local labour chowks and connect workers directly with employers.' }
             ].map((f, i) => (
               <div className="bento-col-4 glass-card" key={i} style={{ padding: '32px', background: '#ffffff', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)' }}>
                 <div style={{ background: 'var(--primary-light)', color: 'var(--primary)', width: '56px', height: '56px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px', border: '1.5px solid var(--primary-border)' }}>
@@ -274,7 +274,7 @@ export default function Home({ data }) {
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.88rem', borderTop: '1px solid var(--border)', paddingTop: '12px', marginTop: '12px' }}>
                   <span className="muted">Estimated Platform Fee:</span>
-                  <strong style={{ color: 'var(--success)' }}>₹0.00 ( Bennett Social Project )</strong>
+                  <strong style={{ color: 'var(--success)' }}>₹0.00 ( Direct Chowk Payout )</strong>
                 </div>
               </div>
 

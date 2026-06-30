@@ -57,7 +57,7 @@
           <div>
             <h4>LabourLink</h4>
             <p style="color:#cfc7b8;max-width:320px">Digitising the labour chowk — connecting hardworking daily-wage workers with people who need them, across Greater Noida.</p>
-            <p style="color:#8d8d8d;font-size:.85rem;margin-top:10px">A student-built initiative · Bennett University, Greater Noida</p>
+            <p style="color:#8d8d8d;font-size:.85rem;margin-top:10px">LabourLink Startup Initiative · Greater Noida</p>
           </div>
           <div>
             <h4>Quick Links</h4>

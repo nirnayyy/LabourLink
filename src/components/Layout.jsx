@@ -70,7 +70,7 @@ export default function Layout({ auth, onLogout, children }) {
         setLilaOpen(false);
         return;
       } else if (chip === "📞 Call Helpline Desk") {
-        botText = "You can contact our Bennett University social mission desk directly at +91 99999-XXXXX (Active 9 AM to 9 PM daily). We are here to help!";
+        botText = "You can contact our LabourLink startup coordination desk directly at +91 99999-XXXXX (Active 9 AM to 9 PM daily). We are here to help!";
         nextChips = ["↩️ Main Options"];
       } else {
         // Default or Main Options
@@ -293,8 +293,8 @@ export default function Layout({ auth, onLogout, children }) {
               <div style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: '#111827', border: '1px solid #1f2937', padding: '12px 16px', borderRadius: 'var(--radius-md)' }}>
                 <div style={{ background: 'var(--success-light)', color: 'var(--success-text)', width: '28px', height: '28px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontWeight: 700, fontSize: '0.85rem' }}>✓</div>
                 <div>
-                  <div style={{ color: '#f8fafc', fontSize: '0.8rem', fontWeight: 700 }}>Bennett University Initiative</div>
-                  <div style={{ color: '#64748b', fontSize: '0.72rem', marginTop: '1px' }}>Local Community Social Project</div>
+                  <div style={{ color: '#f8fafc', fontSize: '0.8rem', fontWeight: 700 }}>Independent Startup Venture</div>
+                  <div style={{ color: '#64748b', fontSize: '0.72rem', marginTop: '1px' }}>Noida Labour Chowk Digitalization</div>
                 </div>
               </div>
             </div>

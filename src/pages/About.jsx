@@ -10,7 +10,7 @@ export default function About() {
             <p className="eyebrow">Our mission</p>
             <h2>Connecting honest work with people who need it</h2>
             <p className="lead">
-              LabourLink is a student-built initiative from <b>Bennett University, Greater Noida</b>.
+              LabourLink is an independent startup initiative from <b>Greater Noida</b>.
               We're digitising the labour chowk — making daily-wage workers discoverable beyond
               the street corner, while keeping the process simple and human.
             </p>
