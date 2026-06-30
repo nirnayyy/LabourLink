@@ -64,53 +64,57 @@ export default function WorkerDetail({ data, onAddReview }) {
   ];
 
   return (
-    <section className="section fade-in" style={{ background: 'var(--bg)', minHeight: '80vh' }}>
+    <section className="section fade-in" style={{ background: 'var(--bg)', minHeight: '80vh', position: 'relative' }}>
       <div className="container">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px' }}>
-          <Link to="/browse" className="btn btn-ghost btn-sm" style={{ fontWeight: 600 }}>
+        
+        {/* Navigation Action Buttons */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+          <Link to="/browse" className="btn btn-ghost btn-sm" style={{ fontWeight: 700, padding: '8px 16px', borderRadius: '4px', border: '1.5px solid var(--border)' }}>
             <ArrowLeft size={16} /> Back to Directory
           </Link>
-          <button className="btn btn-ghost btn-sm" onClick={handleShare}>
+          <button className="btn btn-ghost btn-sm" onClick={handleShare} style={{ fontWeight: 750, padding: '8px 16px', borderRadius: '4px', border: '1.5px solid var(--border)' }}>
             <Share size={16} /> {copied ? 'Link Copied!' : 'Share Profile'}
           </button>
         </div>
 
-        <div className="split" style={{ alignItems: 'start', gap: '36px' }}>
+        <div className="split" style={{ alignItems: 'start', gap: '40px' }}>
           
           {/* Left panel: Info & Verification Checklists */}
-          <div>
-            <div className="card" style={{ padding: '36px', background: '#ffffff', border: '1px solid var(--border)', marginBottom: '32px' }}>
-              <div style={{ display: 'flex', gap: '24px', alignItems: 'center', flexWrap: 'wrap', marginBottom: '28px' }}>
+          <div style={{ flex: 1.3 }}>
+            <div className="card glass-card" style={{ padding: '36px', background: '#ffffff', border: '1px solid var(--border)', marginBottom: '32px', borderRadius: 'var(--radius-lg)' }}>
+              
+              {/* Profile Cover Header */}
+              <div style={{ display: 'flex', gap: '28px', alignItems: 'center', flexWrap: 'wrap', marginBottom: '28px' }}>
                 <img
                   src={worker.photo_url || '/assets/worker1.jpeg'}
                   alt={worker.name}
-                  style={{ width: '130px', height: '130px', borderRadius: '20px', objectFit: 'cover', border: '4px solid var(--primary-light)', boxShadow: 'var(--shadow-sm)' }}
+                  style={{ width: '120px', height: '120px', borderRadius: '16px', objectFit: 'cover', border: '3px solid var(--primary-light)', boxShadow: 'var(--shadow)' }}
                 />
                 <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-                    <span className={`badge-avail ${worker.availability_status}`}>{worker.availability_status}</span>
-                    <span style={{ fontSize: '0.8rem', color: 'var(--muted-light)', fontWeight: 700 }}>UID: {worker.id.toUpperCase()}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                    <span className={`status-chip ${worker.availability_status}`} style={{ textTransform: 'capitalize' }}>{worker.availability_status}</span>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--muted-light)', fontWeight: 750 }}>UID: {worker.id.toUpperCase()}</span>
                   </div>
-                  <h1 style={{ fontSize: '2.2rem', margin: '0 0 8px' }}>{worker.name}</h1>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--muted)', fontSize: '0.95rem' }}>
+                  <h2 style={{ margin: '0 0 6px', fontSize: '1.8rem', color: 'var(--ink)' }}>{worker.name}</h2>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--muted)', fontSize: '0.92rem' }}>
                     <MapPin size={14} style={{ color: 'var(--muted-light)' }} /> {worker.area}{worker.locality ? `, ${worker.locality}` : ''}
                   </div>
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '12px', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)', padding: '16px 0', margin: '24px 0', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', gap: '12px', borderTop: '1.5px solid var(--border)', borderBottom: '1.5px solid var(--border)', padding: '16px 0', margin: '24px 0', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Star fill="var(--warning)" size={18} />
-                  <strong style={{ fontSize: '1.2rem' }}>{Number(worker.rating_avg).toFixed(1)}</strong>
-                  <span className="muted" style={{ color: 'var(--muted)' }}>· {worker.total_reviews} reviews · {worker.total_jobs} jobs done</span>
+                  <Star fill="var(--warning)" size={18} style={{ color: 'var(--warning)' }} />
+                  <strong style={{ fontSize: '1.15rem', color: 'var(--ink)' }}>{Number(worker.rating_avg).toFixed(1)}</strong>
+                  <span className="muted" style={{ color: 'var(--muted)', fontWeight: 600 }}>· {worker.total_reviews} reviews · {worker.total_jobs} jobs done</span>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem', color: 'var(--primary)', fontWeight: 750, background: 'var(--primary-light)', padding: '6px 14px', borderRadius: '99px', border: '1px solid var(--primary-border)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.78rem', color: 'var(--primary)', fontWeight: 800, background: 'var(--primary-light)', padding: '6px 14px', borderRadius: '99px', border: '1px solid var(--primary-border)' }}>
                   <Shield size={14} /> In-Person Screened
                 </div>
               </div>
 
               <div style={{ marginBottom: '32px' }}>
-                <h4 style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '1.5px', color: 'var(--muted-light)', margin: '0 0 12px' }}>Registered Skills</h4>
+                <h4 style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--muted-light)', margin: '0 0 12px', fontWeight: 800 }}>Registered Skills</h4>
                 <div className="tags">
                   {(worker.work_types || []).map(t => <span className="tag" key={t}>{t}</span>)}
                 </div>
@@ -118,8 +122,8 @@ export default function WorkerDetail({ data, onAddReview }) {
 
               {/* 6-Point verification Checklist */}
               <div>
-                <h4 style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '1.5px', color: 'var(--muted-light)', margin: '0 0 16px' }}>🛡️ In-Person Verification &amp; Vetting</h4>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <h4 style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--muted-light)', margin: '0 0 16px', fontWeight: 800 }}>🛡️ In-Person Verification Vetting</h4>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '14px' }}>
                   {[
                     { label: 'Identity Proof (Aadhaar)', done: true },
                     { label: 'Physical Chowk Register', done: true },
@@ -128,8 +132,8 @@ export default function WorkerDetail({ data, onAddReview }) {
                     { label: 'Punctuality Track Checked', done: true },
                     { label: 'Noida Residence Confirmed', done: true }
                   ].map((chk, idx) => (
-                    <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.88rem', color: 'var(--ink)', fontWeight: 550 }}>
-                      <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: 'var(--success-light)', border: '1px solid var(--success-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--success)', flexShrink: 0 }}>
+                    <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.85rem', color: 'var(--ink)', fontWeight: 600 }}>
+                      <div style={{ width: '22px', height: '22px', borderRadius: '50%', background: 'var(--success-light)', border: '1px solid var(--success-border)', display: 'flex', alignItems: 'center', justifyCentert: 'center', color: 'var(--success)', flexShrink: 0, justifyContent: 'center' }}>
                         <Check size={12} strokeWidth={3.5} />
                       </div>
                       {chk.label}
@@ -139,20 +143,20 @@ export default function WorkerDetail({ data, onAddReview }) {
               </div>
             </div>
 
-            {/* Rating breakdown Histogram chart */}
-            <div className="card" style={{ padding: '28px', background: '#ffffff', border: '1px solid var(--border)', marginBottom: '32px' }}>
-              <h3 style={{ margin: '0 0 20px', fontSize: '1.15rem' }}>⭐ Star Ratings Breakdown</h3>
+            {/* Rating breakdown Histogram */}
+            <div className="card glass-card" style={{ padding: '28px', background: '#ffffff', border: '1px solid var(--border)', marginBottom: '32px', borderRadius: 'var(--radius-lg)' }}>
+              <h3 style={{ margin: '0 0 20px', fontSize: '1.20rem', color: 'var(--ink)' }}>⭐ Star Ratings Breakdown</h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 {[5, 4, 3, 2, 1].map(starsNum => {
                   const count = rCounts[starsNum] || 0;
                   const pct = (count / totalR) * 100;
                   return (
                     <div key={starsNum} style={{ display: 'flex', alignItems: 'center', gap: '16px', fontSize: '0.88rem' }}>
-                      <span style={{ width: '56px', fontWeight: 600, color: 'var(--muted)' }}>{starsNum} Stars</span>
-                      <div style={{ flex: 1, height: '10px', background: 'var(--bg)', borderRadius: '99px', overflow: 'hidden' }}>
+                      <span style={{ width: '56px', fontWeight: 700, color: 'var(--muted)' }}>{starsNum} Stars</span>
+                      <div style={{ flex: 1, height: '8px', background: 'var(--bg)', borderRadius: '99px', overflow: 'hidden', border: '1px solid var(--border)' }}>
                         <div style={{ width: `${pct}%`, height: '100%', background: 'var(--warning)', borderRadius: '99px' }}></div>
                       </div>
-                      <span style={{ width: '28px', color: 'var(--muted-light)', textAlign: 'right', fontWeight: 600 }}>{count}</span>
+                      <span style={{ width: '28px', color: 'var(--muted-light)', textAlign: 'right', fontWeight: 700 }}>{count}</span>
                     </div>
                   );
                 })}
@@ -160,16 +164,16 @@ export default function WorkerDetail({ data, onAddReview }) {
             </div>
 
             {/* Vertical timeline of past jobs */}
-            <div className="card" style={{ padding: '28px', background: '#ffffff', border: '1px solid var(--border)' }}>
-              <h3 style={{ margin: '0 0 24px', fontSize: '1.15rem' }}>📋 Verified Work Experience Timeline</h3>
+            <div className="card glass-card" style={{ padding: '28px', background: '#ffffff', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)' }}>
+              <h3 style={{ margin: '0 0 24px', fontSize: '1.20rem', color: 'var(--ink)' }}>📋 Verified Work Experience Timeline</h3>
               <div className="timeline">
                 {mockWorkTimeline.map((item, idx) => (
                   <div className="timeline-item" key={idx}>
-                    <div className="timeline-dot completed"></div>
-                    <div className="timeline-content">
+                    <div className="timeline-dot completed" style={{ background: 'var(--primary)', border: '2px solid var(--primary-border)' }}></div>
+                    <div className="timeline-content" style={{ background: 'var(--bg)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)', padding: '16px' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', alignItems: 'center' }}>
                         <strong style={{ fontSize: '0.92rem', color: 'var(--ink)' }}>{item.category}</strong>
-                        <span className="muted" style={{ fontSize: '0.78rem', fontWeight: 600 }}>{fmtDate(item.date)}</span>
+                        <span className="muted" style={{ fontSize: '0.78rem', fontWeight: 700 }}>{fmtDate(item.date)}</span>
                       </div>
                       <p className="muted" style={{ margin: 0, fontSize: '0.85rem', lineHeight: '1.5' }}>{item.desc}</p>
                     </div>
@@ -180,78 +184,78 @@ export default function WorkerDetail({ data, onAddReview }) {
           </div>
 
           {/* Right panel: Booking card & Review submissions */}
-          <div>
-            <div className="card" style={{ padding: '32px', background: '#ffffff', border: '1px solid var(--border)', position: 'sticky', top: '100px', marginBottom: '32px', boxShadow: 'var(--shadow-md)' }}>
-              <h3 style={{ margin: '0 0 20px', fontSize: '1.2rem' }}>📋 Coordinator Booking</h3>
+          <div style={{ flex: 0.9, position: 'sticky', top: '100px' }}>
+            <div className="card glass-card" style={{ padding: '32px', background: '#ffffff', border: '1px solid var(--border)', marginBottom: '32px', borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-md)' }}>
+              <h3 style={{ margin: '0 0 20px', fontSize: '1.25rem', color: 'var(--ink)' }}>📋 Coordinator Booking</h3>
               
               <div style={{ background: 'var(--bg)', border: '1px solid var(--border)', padding: '20px', borderRadius: 'var(--radius-md)', marginBottom: '24px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', alignItems: 'center' }}>
-                  <span className="muted" style={{ fontWeight: 500 }}>Reliability Score:</span>
+                  <span className="muted" style={{ fontWeight: 600 }}>Reliability Score:</span>
                   <strong style={{ color: 'var(--primary)', fontSize: '1.1rem' }}>{worker.reliability_score || 50}/100</strong>
                 </div>
-                <div style={{ width: '100%', height: '6px', background: '#e2e8f0', borderRadius: '99px', overflow: 'hidden' }}>
+                <div style={{ width: '100%', height: '6px', background: '#f1f5f9', borderRadius: '99px', overflow: 'hidden' }}>
                   <div style={{ width: `${worker.reliability_score || 50}%`, height: '100%', background: 'var(--primary)', borderRadius: '99px' }}></div>
                 </div>
-                <div style={{ fontSize: '0.75rem', color: 'var(--muted-light)', marginTop: '10px', lineHeight: '1.4' }}>Based on punctuality, job attendance, and direct Noida user feedbacks.</div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--muted-light)', marginTop: '10px', lineHeight: '1.45', fontWeight: 550 }}>Based on punctuality, job attendance, and direct Noida user feedbacks.</div>
               </div>
 
               <Link
                 to={`/post-job?work_type=${encodeURIComponent((worker.work_types || [])[0] || '')}&area=${encodeURIComponent(worker.area)}`}
                 className="btn btn-primary btn-block"
-                style={{ padding: '14px 20px' }}
+                style={{ padding: '14px 20px', borderRadius: 'var(--radius-sm)' }}
               >
                 Book {worker.name} Now
               </Link>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '14px', fontSize: '0.8rem', color: 'var(--muted)', justifyContent: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '14px', fontSize: '0.8rem', color: 'var(--muted)', justifyContent: 'center', fontWeight: 550 }}>
                 <Shield size={14} style={{ color: 'var(--success)' }} /> Direct Cash/UPI payment · Pay worker directly.
               </div>
             </div>
 
             {/* Review list */}
-            <div style={{ maxWidth: '600px', margin: '40px auto 0' }}>
+            <div>
               <h3 style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px', fontSize: '1.25rem' }}>
-                <span>Verified Client Reviews</span>
-                <span style={{ background: 'var(--primary-light)', border: '1px solid var(--primary-border)', fontSize: '0.78rem', padding: '2px 10px', borderRadius: '99px', color: 'var(--primary)', fontWeight: 700 }}>
+                <span style={{ color: 'var(--ink)' }}>Verified Reviews</span>
+                <span style={{ background: 'var(--primary-light)', border: '1.5px solid var(--primary-border)', fontSize: '0.78rem', padding: '2px 10px', borderRadius: '99px', color: 'var(--primary)', fontWeight: 800 }}>
                   {workerReviews.length}
                 </span>
               </h3>
 
               {workerReviews.length ? workerReviews.map(r => (
-                <div className="card" key={r.id} style={{ padding: '24px', background: '#ffffff', border: '1px solid var(--border)', marginBottom: '20px', position: 'relative' }}>
-                  <div style={{ position: 'absolute', top: '20px', right: '20px', background: 'var(--primary-light)', color: 'var(--primary)', border: '1px solid var(--primary-border)', fontSize: '0.68rem', fontWeight: 700, padding: '3px 8px', borderRadius: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                <div className="card glass-card" key={r.id} style={{ padding: '24px', background: '#ffffff', border: '1px solid var(--border)', marginBottom: '20px', position: 'relative', borderRadius: 'var(--radius-md)' }}>
+                  <div style={{ position: 'absolute', top: '20px', right: '20px', background: 'var(--primary-light)', color: 'var(--primary)', border: '1px solid var(--primary-border)', fontSize: '0.68rem', fontWeight: 800, padding: '3px 8px', borderRadius: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                     Verified Hire
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '12px', paddingRight: '90px' }}>
                     <strong style={{ fontSize: '1rem', color: 'var(--ink)' }}>{r.hirer_name}</strong>
-                    <span className="stars">{stars(r.rating)}</span>
+                    <span className="stars" style={{ fontSize: '1rem' }}>{stars(r.rating)}</span>
                   </div>
-                  <p style={{ margin: 0, fontSize: '0.92rem', color: 'var(--muted)', lineHeight: '1.65', fontStyle: 'italic' }}>"{r.comment}"</p>
-                  <div className="muted" style={{ fontSize: '0.78rem', marginTop: '14px', fontWeight: 550, color: 'var(--muted-light)' }}>📅 Job completed on {fmtDate(r.created_at)}</div>
+                  <p style={{ margin: 0, fontSize: '0.92rem', color: 'var(--muted)', lineHeight: '1.6', fontStyle: 'italic' }}>"{r.comment}"</p>
+                  <div className="muted" style={{ fontSize: '0.78rem', marginTop: '14px', fontWeight: 700, color: 'var(--muted-light)' }}>📅 Job completed on {fmtDate(r.created_at)}</div>
                 </div>
               )) : (
-                <div style={{ padding: '40px 20px', background: '#ffffff', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', textAlign: 'center', marginBottom: '32px' }}>
+                <div className="card glass-card" style={{ padding: '40px 20px', background: '#ffffff', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', textAlign: 'center', marginBottom: '32px' }}>
                   <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}>💬</div>
-                  <h4 style={{ margin: '0 0 6px', fontSize: '1.05rem' }}>No reviews yet</h4>
+                  <h4 style={{ margin: '0 0 6px', fontSize: '1.05rem', color: 'var(--ink)' }}>No reviews yet</h4>
                   <p className="muted" style={{ margin: 0, fontSize: '0.88rem' }}>Be the first to review this worker after completing an assignment.</p>
                 </div>
               )}
 
-              {/* Review submit forms */}
-              <div className="card" style={{ padding: '32px', background: '#ffffff', border: '1px solid var(--border)', marginTop: '36px' }}>
-                <h4 style={{ margin: '0 0 6px', fontSize: '1.15rem' }}>Submit a Job Review</h4>
+              {/* Review submit form */}
+              <div className="card glass-card" style={{ padding: '32px', background: '#ffffff', border: '1px solid var(--border)', marginTop: '36px', borderRadius: 'var(--radius-lg)' }}>
+                <h4 style={{ margin: '0 0 6px', fontSize: '1.15rem', color: 'var(--ink)' }}>Submit a Job Review</h4>
                 <p className="muted" style={{ margin: '0 0 24px', fontSize: '0.85rem' }}>All review submissions undergo verification by our student moderation team.</p>
                 
                 {msg && <div className="notice ok" style={{ marginBottom: '20px' }}>{msg}</div>}
                 
                 <form onSubmit={handleSubmit}>
                   <div className="field">
-                    <label htmlFor="r-name">Your Full Name</label>
-                    <input id="r-name" value={form.hirer_name} onChange={e => setForm(f => ({ ...f, hirer_name: e.target.value }))} placeholder="e.g. Aditi Sharma" required />
+                    <label htmlFor="r-name" style={{ fontSize: '0.82rem', fontWeight: 750 }}>Your Full Name</label>
+                    <input id="r-name" value={form.hirer_name} onChange={e => setForm(f => ({ ...f, hirer_name: e.target.value }))} placeholder="e.g. Aditi Sharma" required style={{ padding: '10px 14px' }} />
                   </div>
 
-                  {/* Visual Clickable Star Rating Input */}
+                  {/* Star Rating Input */}
                   <div className="field">
-                    <label style={{ marginBottom: '6px' }}>Rate Worker Punctuality &amp; Skills</label>
+                    <label style={{ marginBottom: '6px', fontSize: '0.82rem', fontWeight: 750 }}>Rate Worker Punctuality &amp; Skills</label>
                     <div style={{ display: 'flex', gap: '8px', alignItems: 'center', padding: '6px 0' }}>
                       {[1, 2, 3, 4, 5].map(idx => (
                         <button
@@ -262,7 +266,7 @@ export default function WorkerDetail({ data, onAddReview }) {
                           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', outline: 'none' }}
                         >
                           <Star
-                            size={28}
+                            size={26}
                             fill={idx <= form.rating ? 'var(--warning)' : 'none'}
                             style={{
                               color: idx <= form.rating ? 'var(--warning)' : 'var(--border-hover)',
@@ -272,21 +276,22 @@ export default function WorkerDetail({ data, onAddReview }) {
                           />
                         </button>
                       ))}
-                      <span style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--warning-text)', marginLeft: '8px', background: 'var(--warning-light)', padding: '2px 10px', borderRadius: '99px', border: '1px solid var(--warning-border)' }}>
+                      <span style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--warning-text)', marginLeft: '8px', background: 'var(--warning-light)', padding: '3px 12px', borderRadius: '99px', border: '1px solid var(--warning-border)' }}>
                         {form.rating} Star{form.rating > 1 ? 's' : ''}
                       </span>
                     </div>
                   </div>
 
                   <div className="field">
-                    <label htmlFor="r-comment">Review Description</label>
-                    <textarea id="r-comment" value={form.comment} onChange={e => setForm(f => ({ ...f, comment: e.target.value }))} placeholder="Tell us about their punctuality, performance, and general behavior..." required />
+                    <label htmlFor="r-comment" style={{ fontSize: '0.82rem', fontWeight: 750 }}>Review Description</label>
+                    <textarea id="r-comment" value={form.comment} onChange={e => setForm(f => ({ ...f, comment: e.target.value }))} placeholder="Tell us about their punctuality, performance, and general behavior..." required style={{ padding: '12px 14px', minHeight: '100px' }} />
                   </div>
-                  <button className="btn btn-primary btn-block" type="submit">Submit Review for Verification</button>
+                  <button className="btn btn-primary btn-block" type="submit" style={{ borderRadius: 'var(--radius-sm)' }}>Submit Review for Verification</button>
                 </form>
               </div>
             </div>
           </div>
+          
         </div>
       </div>
     </section>

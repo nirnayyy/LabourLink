@@ -1,46 +1,39 @@
 /* ============================================================
-   LabourLink v2.5 — Premium Design System & UI Kit
-   An Enterprise Design System built for Kasna, Noida & Greater Noida
+   LabourLink v3.0 — Premium Design System & UI Kit
    ============================================================ */
 
 /* ---------- Google Fonts & Design Tokens ---------- */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
 
 :root {
-  /* HSL Color Tokens */
-  --h-primary: 161;   /* Emerald */
-  --h-secondary: 24;  /* Amber/Orange */
-  --h-indigo: 243;   /* Royal Indigo */
-  --h-neutral: 215;  /* Slate Neutral */
+  /* HSL Brand Colors (Indigo-Violet & Lime) */
+  --primary: hsl(238, 83%, 66%);
+  --primary-hover: hsl(242, 78%, 60%);
+  --primary-light: hsl(238, 83%, 97%);
+  --primary-border: hsl(238, 83%, 92%);
+  --primary-rgb: 99, 102, 241;
 
-  /* Brand Colors */
-  --primary: hsl(var(--h-primary), 84%, 28%);
-  --primary-hover: hsl(var(--h-primary), 84%, 22%);
-  --primary-light: hsl(var(--h-primary), 75%, 96%);
-  --primary-border: hsl(var(--h-primary), 60%, 88%);
-  --primary-rgb: 6, 95, 70;
+  --secondary: hsl(84, 81%, 44%);
+  --secondary-hover: hsl(84, 81%, 38%);
+  --secondary-light: hsl(84, 81%, 96%);
+  --secondary-border: hsl(84, 81%, 90%);
+  --secondary-rgb: 132, 204, 22;
 
-  --secondary: hsl(var(--h-secondary), 95%, 46%);
-  --secondary-hover: hsl(var(--h-secondary), 95%, 38%);
-  --secondary-light: hsl(var(--h-secondary), 90%, 96%);
-  --secondary-border: hsl(var(--h-secondary), 85%, 88%);
-  --secondary-rgb: 234, 88, 12;
-
-  --indigo: hsl(var(--h-indigo), 75%, 58%);
-  --indigo-hover: hsl(var(--h-indigo), 70%, 50%);
-  --indigo-light: hsl(var(--h-indigo), 80%, 97%);
-  --indigo-border: hsl(var(--h-indigo), 75%, 90%);
+  --indigo: hsl(238, 83%, 66%);
+  --indigo-hover: hsl(242, 78%, 60%);
+  --indigo-light: hsl(238, 83%, 97%);
+  --indigo-border: hsl(238, 83%, 92%);
 
   /* Neutrals Palette */
-  --bg: #f8fafc;
+  --bg: #fafafa;
   --card: #ffffff;
-  --ink: #0f172a;
+  --ink: #0b0f19;
   --muted: #475569;
   --muted-light: #94a3b8;
-  --border: #e2e8f0;
+  --border: #f1f5f9;
   --border-hover: #cbd5e1;
 
-  /* State Alerts (HSL Mapped) */
+  /* State Alerts */
   --success: #10b981;
   --success-light: #ecfdf5;
   --success-border: #a7f3d0;
@@ -62,18 +55,34 @@
   --info-text: #1e40af;
 
   /* Premium Box Shadows */
-  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.03), 0 1px 2px rgba(15, 23, 42, 0.02);
-  --shadow: 0 4px 12px -1px rgba(15, 23, 42, 0.04), 0 2px 6px -2px rgba(15, 23, 42, 0.03);
-  --shadow-md: 0 12px 20px -3px rgba(15, 23, 42, 0.05), 0 4px 8px -4px rgba(15, 23, 42, 0.04);
-  --shadow-lg: 0 24px 36px -4px rgba(15, 23, 42, 0.06), 0 8px 16px -6px rgba(15, 23, 42, 0.05);
-  --shadow-glow: 0 0 25px rgba(6, 95, 70, 0.08);
+  --shadow-sm: 0 1px 3px rgba(11, 15, 25, 0.03);
+  --shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.05), 0 1px 3px rgba(11, 15, 25, 0.02);
+  --shadow-md: 0 20px 40px -15px rgba(99, 102, 241, 0.08), 0 1px 4px rgba(11, 15, 25, 0.03);
+  --shadow-lg: 0 30px 60px -20px rgba(99, 102, 241, 0.12), 0 1px 6px rgba(11, 15, 25, 0.04);
+  --shadow-glow: 0 0 30px rgba(99, 102, 241, 0.15);
 
   /* Radius & Transitions */
-  --radius-lg: 20px;
-  --radius-md: 12px;
-  --radius-sm: 8px;
-  --maxw: 1280px;
-  --transition: cubic-bezier(0.16, 1, 0.3, 1) 0.4s;
+  --radius-lg: 16px;
+  --radius-md: 10px;
+  --radius-sm: 6px;
+  --maxw: 1200px;
+  --transition: cubic-bezier(0.16, 1, 0.3, 1) 0.5s;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #cbd5e1;
 }
 
 /* ---------- Global Defaults & Resets ---------- */
@@ -96,6 +105,11 @@ body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   color: var(--ink);
   background: var(--bg);
+  background-image: 
+    radial-gradient(at 0% 0%, hsla(238, 83%, 66%, 0.03) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, hsla(84, 81%, 44%, 0.03) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, hsla(238, 83%, 66%, 0.02) 0px, transparent 50%),
+    url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h40v40H0V0zm1 1v38h38V1H1z' fill='%236366f1' fill-opacity='0.015' fill-rule='evenodd'/%3E%3C/svg%3E");
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -111,26 +125,9 @@ main {
   flex: 1;
 }
 
-/* ---------- Custom Professional Scrollbar ---------- */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-::-webkit-scrollbar-track {
-  background: var(--bg);
-}
-::-webkit-scrollbar-thumb {
-  background: var(--border-hover);
-  border-radius: 99px;
-  border: 2px solid var(--bg);
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--muted-light);
-}
-
 /* ---------- Advanced Typography ---------- */
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   color: var(--ink);
   font-weight: 700;
   line-height: 1.2;
@@ -155,7 +152,7 @@ h3 {
 }
 
 h4 {
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   font-weight: 600;
 }
 
@@ -1277,7 +1274,87 @@ table.data tr:hover td {
   letter-spacing: 1px;
   border-radius: var(--radius-sm);
   margin: 16px 0 20px;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   box-shadow: var(--shadow-sm);
 }
+
+/* ---------- Bento Grid & Glassmorphism Utilities ---------- */
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 24px;
+}
+.bento-col-4 { grid-column: span 4; }
+.bento-col-6 { grid-column: span 6; }
+.bento-col-8 { grid-column: span 8; }
+.bento-col-12 { grid-column: span 12; }
+
+@media (max-width: 1024px) {
+  .bento-col-4, .bento-col-6, .bento-col-8 {
+    grid-column: span 6;
+  }
+}
+@media (max-width: 640px) {
+  .bento-col-4, .bento-col-6, .bento-col-8, .bento-col-12 {
+    grid-column: span 12;
+  }
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+  box-shadow: var(--shadow);
+  transition: transform 0.4s var(--transition), box-shadow 0.4s var(--transition), border-color 0.4s var(--transition);
+}
+
+.glass-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg), var(--shadow-glow);
+  border-color: rgba(99, 102, 241, 0.3) !important;
+}
+
+/* Button Shimmers */
+.btn-primary {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -60%;
+  width: 20%;
+  height: 200%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: rotate(30deg);
+  transition: none;
+}
+.btn-primary:hover::after {
+  left: 150%;
+  transition: all 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Background Blurry Blobs */
+.mesh-blob {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, rgba(99, 102, 241, 0) 70%);
+  filter: blur(50px);
+  z-index: -1;
+  pointer-events: none;
+}
+.mesh-blob.accent {
+  background: radial-gradient(circle, rgba(132, 204, 22, 0.06) 0%, rgba(132, 204, 22, 0) 70%);
+}
+
 
